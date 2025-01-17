@@ -1,5 +1,5 @@
 import React from "react";
-import { Link as InertiaLink, usePage,router } from "@inertiajs/react";
+import { Link as InertiaLink, usePage, router } from "@inertiajs/react";
 import {
     Box,
     Heading,
@@ -24,7 +24,7 @@ import {
 import { HamburgerIcon, SettingsIcon } from "@chakra-ui/icons";
 
 const MainLayout = ({ children, title }) => {
-    const { auth,csrf_token } = usePage().props;
+    const { auth, csrf_token } = usePage().props;
 
     const { isOpen, onOpen, onClose } = useDisclosure();
     const btnRef = React.useRef();
@@ -70,7 +70,7 @@ const MainLayout = ({ children, title }) => {
                                         >
                                             店舗の登録
                                         </Link>
-                                        
+
                                         {/* Inertiaを使うパターン */}
                                         {/* <InertiaLink
                                             href={route("logout")}
@@ -81,7 +81,12 @@ const MainLayout = ({ children, title }) => {
                                             ログアウト
                                         </InertiaLink> */}
                                         {/* handleLogoutを使うパターン */}
-                                        <Text onClick={handleLogout} cursor={"pointer"}>ログアウト</Text>
+                                        <Text
+                                            onClick={handleLogout}
+                                            cursor={"pointer"}
+                                        >
+                                            ログアウト
+                                        </Text>
                                     </VStack>
                                 </Box>
                             ) : (
@@ -97,7 +102,7 @@ const MainLayout = ({ children, title }) => {
                 </DrawerContent>
             </Drawer>
             <header>
-                <Box bg={"orange.800"}>
+                <Box bg={"teal.700"}>
                     <HStack
                         justifyContent={"space-between"}
                         alignItems={"center"}
@@ -140,18 +145,14 @@ const MainLayout = ({ children, title }) => {
                                 <>
                                     <Box>
                                         <Link href={route("login")}>
-                                            <Button
-                                                colorScheme={"white"}
-                                                variant={"outline"}
-                                                _hover={{ bg: "gray.500" }}
-                                            >
+                                            <Button colorScheme="whiteAlpha">
                                                 ログイン
                                             </Button>
                                         </Link>
                                     </Box>
                                     <Box>
                                         <Link href={route("register")}>
-                                            <Button colorScheme={"blue"}>
+                                            <Button colorScheme="blackAlpha">
                                                 新規登録
                                             </Button>
                                         </Link>
@@ -194,14 +195,14 @@ const MainLayout = ({ children, title }) => {
             {/* フッター */}
             <Box>
                 <Box
-                    bg={"orange.800"}
+                    bg={"teal.700"}
                     color={"white"}
                     fontWeight={"bold"}
                     textAlign={"center"}
                     py={{ base: 2, md: 3 }}
                 >
                     <Text fontSize={{ base: 13, md: 16 }}>
-                        &copy; 2024 {import.meta.env.VITE_APP_NAME}
+                        &copy; 2025 {import.meta.env.VITE_APP_NAME}
                     </Text>
                 </Box>
             </Box>

@@ -35,6 +35,7 @@ class ReviewController extends Controller
     // レビューの保存
     public function store(Request $request)
     {
+        dd($request);
         $user = auth()->user();
         $status = "error";
         

@@ -10,18 +10,20 @@ import {
     Input,
     Button,
     Spinner,
+    WrapItem,
+    SimpleGrid,
 } from "@chakra-ui/react";
 import { StarIcon } from "@chakra-ui/icons";
 import MainLayout from "../Layouts/MainLayout";
-import React,{useState} from "react";
-import {router} from "@inertiajs/react";
+import React, { useState } from "react";
+import { router } from "@inertiajs/react";
 import ReviewList from "@/Components/Organisms/ReviewList";
 
 const Home = (props) => {
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(false);
     const toast = useToast();
-    if(props.status === "shop-created"){
+    if (props.status === "shop-created") {
         toast({
             position: "top",
             title: "店舗登録成功",
@@ -46,16 +48,15 @@ const Home = (props) => {
     };
 
     const getButtonLabel = (label) => {
-        if(label.includes("previous")) return "前へ";
-        if(label.includes("next")) return "次へ";
+        if (label.includes("previous")) return "前へ";
+        if (label.includes("next")) return "次へ";
         return label;
     };
 
     const handleSearch = (e) => {
         setLoading(true);
         e.preventDefault();
-        const newSearch =
-        document.getElementById("search").value;
+        const newSearch = document.getElementById("search").value;
         setSearch(newSearch);
 
         setTimeout(() => {
@@ -63,25 +64,30 @@ const Home = (props) => {
             setLoading(false);
             router.get(route("shop.index"), { search: newSearch });
         }, 500);
-    }
-        
+    };
+
     return (
         <>
             <Box p={4}>
                 <Heading
                     fontSize={{ base: "24px", md: "40px", lg: "56px" }}
                     mb={2}
+                    textAlign={"center"}
                 >
-                    ショップ一覧
+                    学習塾一覧
                 </Heading>
-                <VStack spacing={4} mb={4}>
+                <HStack spacing={4} mb={4}>
                     <Input
                         name="search"
                         id="search"
                         placeholder="検索..."
                     ></Input>
-                    <Button onClick={handleSearch}>検索</Button>
-                </VStack>
+                    <WrapItem>
+                        <Button onClick={handleSearch} colorScheme="teal">
+                            検索
+                        </Button>
+                    </WrapItem>
+                </HStack>
                 {loading && (
                     <Box
                         display={"flex"}
@@ -91,7 +97,7 @@ const Home = (props) => {
                         <Spinner size={"xl"} />
                     </Box>
                 )}
-                <VStack spacing={4} align="stretch">
+                {/* <VStack spacing={4} align="stretch">
                     {props.shops.data.map((shop) => (
                         <Link
                             href={`/shop/${shop.id}`}
@@ -137,8 +143,71 @@ const Home = (props) => {
                                 </HStack>
                             </Box>
                         </Link>
-                    ))}
-                    <HStack justifyContent={"center"} alignItems={"center"}>
+                    ))} */}
+
+                <VStack spacing={4} align="stretch">
+                    {/* マップされたショップのリスト */}
+                    <SimpleGrid
+                        columns={{ base: 1, md: 2 }}
+                        spacing={4}
+                        w="full"
+                    >
+                        {props.shops.data.map((shop) => (
+                            <Link
+                                href={`/shop/${shop.id}`}
+                                key={shop.id}
+                                _hover={{ color: "gray.500" }}
+                            >
+                                <Box
+                                    key={shop.id}
+                                    p={4}
+                                    borderWidth="1px"
+                                    borderRadius="lg"
+                                    overflow="hidden"
+                                    boxShadow="lg"
+                                >
+                                    <HStack spacing={4}>
+                                        {shop.shop_images.length > 0 ? (
+                                            <Image
+                                                boxSize="100px"
+                                                objectFit="cover"
+                                                src={
+                                                    shop.shop_images[0]
+                                                        .file_path
+                                                }
+                                                alt={shop.name}
+                                            />
+                                        ) : (
+                                            <Image
+                                                boxSize="100px"
+                                                objectFit="cover"
+                                                src="https://via.placeholder.com/100"
+                                                alt={shop.name}
+                                            />
+                                        )}
+
+                                        <VStack align="start">
+                                            <Heading as="h3" size="md">
+                                                {shop.name}
+                                            </Heading>
+                                            <Text>{shop.description}</Text>
+                                            <Text>
+                                                レビュー平均:{" "}
+                                                {shop.reviews_avg_rating}(
+                                                {shop.reviews_count}件)
+                                            </Text>
+                                        </VStack>
+                                    </HStack>
+                                </Box>
+                            </Link>
+                        ))}
+                    </SimpleGrid>
+                    {/* ページネーション部分 */}
+                    <HStack
+                        pt={4}
+                        justifyContent={"center"}
+                        alignItems={"center"}
+                    >
                         {props.shops.links.map((link, index) => (
                             <Button
                                 key={index}
@@ -166,5 +235,5 @@ const Home = (props) => {
         </>
     );
 };
-Home.layout = (page) => <MainLayout children={page} title="ホームの画面" />; 
+Home.layout = (page) => <MainLayout children={page} title="ホームの画面" />;
 export default Home;
