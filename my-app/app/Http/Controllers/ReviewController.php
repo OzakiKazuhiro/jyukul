@@ -35,13 +35,14 @@ class ReviewController extends Controller
     // レビューの保存
     public function store(Request $request)
     {
-        dd($request);
+        // dd($request);
         $user = auth()->user();
         $status = "error";
         
         $request->validate([
             'rating' => 'required|integer|between:1,5',
             'comment' => 'required|string|max:255',
+            'anonymous' => 'nullable|boolean',  // anonymous は省略可能な真偽値
         ]);
         
         $reviewModel = new Review();
@@ -50,6 +51,7 @@ class ReviewController extends Controller
             'user_id' => $user->id,
             'rating' => $request->rating,
             'comment' => $request->comment,
+            'anonymous' => $request->anonymous, // チェックボックスの状態を保存
         ]);
         // ステータス
         if($review){

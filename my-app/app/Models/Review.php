@@ -14,6 +14,7 @@ class Review extends Model
         'user_id',
         'rating',
         'comment',
+        'anonymous',
     ];
 
     // shopsテーブルとのリレーション
@@ -34,6 +35,7 @@ class Review extends Model
         $this->user_id = $data['user_id'];
         $this->rating = $data['rating'];
         $this->comment = $data['comment'];
+        $this->anonymous = $data['anonymous']; // この行を追加
         $this->save();
 
         return $this;

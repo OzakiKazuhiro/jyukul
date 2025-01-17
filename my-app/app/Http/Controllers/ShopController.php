@@ -75,7 +75,7 @@ class ShopController extends Controller
             ->where('shop_id', $id)
             ->orderBy('created_at', 'desc')
             ->get();
-
+        // dd($reviews);
         return Inertia::render('Shop/Detail', [
             'shop' => $shop,
             'createdUser' => $createdUser,
