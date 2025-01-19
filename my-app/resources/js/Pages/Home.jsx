@@ -20,6 +20,7 @@ import { router } from "@inertiajs/react";
 import ReviewList from "@/Components/Organisms/ReviewList";
 
 const Home = (props) => {
+    console.log(props.shops.links);
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(false);
     const toast = useToast();
@@ -48,8 +49,11 @@ const Home = (props) => {
     };
 
     const getButtonLabel = (label) => {
-        if (label.includes("previous")) return "前へ";
-        if (label.includes("next")) return "次へ";
+        // if (label.includes("previous")) return "前へ";
+        // if (label.includes("next")) return "次へ";
+        // ↑日本語化するパッケージを入れてしまったのが原因と予想
+        if (label.includes("&raquo;")) return "次へ";
+        if (label.includes("&laquo;")) return "前へ";
         return label;
     };
 
@@ -97,53 +101,6 @@ const Home = (props) => {
                         <Spinner size={"xl"} />
                     </Box>
                 )}
-                {/* <VStack spacing={4} align="stretch">
-                    {props.shops.data.map((shop) => (
-                        <Link
-                            href={`/shop/${shop.id}`}
-                            key={shop.id}
-                            _hover={{ color: "gray.500" }}
-                        >
-                            <Box
-                                key={shop.id}
-                                p={4}
-                                borderWidth={"1px"}
-                                borderRadius={"lg"}
-                                overflow={"hidden"}
-                                boxShadow={"lg"}
-                            >
-                                <HStack spacing={4}>
-                                    {shop.shop_images.length > 0 ? (
-                                        <Image
-                                            boxSize="100px"
-                                            objectFit="cover"
-                                            src={shop.shop_images[0].file_path}
-                                            alt={shop.name}
-                                        />
-                                    ) : (
-                                        <Image
-                                            boxSize="100px"
-                                            objectFit="cover"
-                                            src="https://via.placeholder.com/100"
-                                            alt={shop.name}
-                                        />
-                                    )}
-
-                                    <VStack align={"start"}>
-                                        <Heading as="h3" size="md">
-                                            {shop.name}
-                                        </Heading>
-                                        <Text>{shop.description}</Text>
-                                        <Text>
-                                            レビュー平均:{" "}
-                                            {shop.reviews_avg_rating}(
-                                            {shop.reviews_count}件)
-                                        </Text>
-                                    </VStack>
-                                </HStack>
-                            </Box>
-                        </Link>
-                    ))} */}
 
                 <VStack spacing={4} align="stretch">
                     {/* マップされたショップのリスト */}
@@ -190,7 +147,14 @@ const Home = (props) => {
                                             <Heading as="h3" size="md">
                                                 {shop.name}
                                             </Heading>
-                                            <Text>{shop.description}</Text>
+                                            <Text>
+                                                {shop.description.length > 30
+                                                    ? `${shop.description.slice(
+                                                          0,
+                                                          20
+                                                      )}…`
+                                                    : shop.description}
+                                            </Text>
                                             <Text>
                                                 レビュー平均:{" "}
                                                 {shop.reviews_avg_rating}(
@@ -212,7 +176,7 @@ const Home = (props) => {
                             <Button
                                 key={index}
                                 onClick={() => handlePageChange(link.url)}
-                                colorScheme={link.active ? "blue" : "gray"}
+                                colorScheme={link.active ? "teal" : "gray"}
                                 isDisabled={!link.url}
                             >
                                 {getButtonLabel(link.label)}
@@ -224,13 +188,22 @@ const Home = (props) => {
                     as="h2"
                     fontSize={{ base: "24px", md: "40px", lg: "56px" }}
                     mt={8}
-                    mb={2}
+                    mb={4}
+                    textAlign={"center"}
                 >
                     新着レビュー
                 </Heading>
-                <VStack spacing={4} align={"stretch"}>
-                    <ReviewList reviews={props.newReviews} />
-                </VStack>
+                <SimpleGrid
+                    columns={{ base: 1, md: 2, lg: 3 }}
+                    spacing={4}
+                    w="full"
+                >
+                    <ReviewList
+                        spacing={4}
+                        align={"stretch"}
+                        reviews={props.newReviews}
+                    />
+                </SimpleGrid>
             </Box>
         </>
     );

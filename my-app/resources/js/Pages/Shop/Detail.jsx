@@ -24,6 +24,7 @@ import ReviewList from "@/Components/Organisms/ReviewList";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import "@splidejs/splide/dist/css/themes/splide-default.min.css";
 const Detail = (props) => {
+    console.log(props.reviews);
     const toast = useToast();
 
     useEffect(() => {
@@ -214,7 +215,7 @@ const Detail = (props) => {
                 </Box>
                 <Box>
                     {props.reviews.length > 0 && (
-                        <Box mb={2}>({props.reviews.length})</Box>
+                        <Box mb={2}>({props.reviews.length})件のレビュー</Box>
                     )}
                 </Box>
                 <Box>
