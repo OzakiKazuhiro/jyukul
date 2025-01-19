@@ -29,7 +29,11 @@ const Create = (props) => {
     const [hoverRating, setHoverRating] = useState(0);
     const [values, setValues] = useState({
         shop_id: props.shop.id,
-        rating: 1,
+        // rating: 1, ←最初はratingのみだった
+        teaching_rating: 1, // 講師の教え方
+        study_rating: 1, // 定期テスト対策
+        facility_rating: 1, // 自習室の環境
+        cost_rating: 1, // 料金
         comment: "",
         anonymous: false, // 匿名かどうかの状態を追加
     });
@@ -98,16 +102,20 @@ const Create = (props) => {
                 boxShadow={"md"}
                 w={{ base: "90%", md: 700 }}
             >
-                <Heading as="h2" size={"md"} mb={4} color={"blue.900"}>
-                    レビューを投稿
+                <Heading
+                    as="h2"
+                    size={"md"}
+                    mb={4}
+                    color={"blue.900"}
+                    textAlign="center"
+                >
+                    {props.shop.name} のレビューを投稿
                 </Heading>
-                <Text fontSize={"xl"} color={"gray.500"} mb={2}>
-                    {props.shop.name}
-                </Text>
+
                 <form onSubmit={handleCheck}>
                     <FormControl isRequired mb={4}>
                         <FormLabel htmlFor="rating" fontWeight={"bold"}>
-                            評価
+                            講師の教え方
                         </FormLabel>
                         <HStack spacing={1} mb={4}>
                             {Array(5)
@@ -116,7 +124,8 @@ const Create = (props) => {
                                     <StarIcon
                                         key={i}
                                         color={
-                                            i < values.rating || i < hoverRating
+                                            i < values.teaching_rating ||
+                                            i < hoverRating
                                                 ? "yellow.500"
                                                 : "gray.300"
                                         }
@@ -124,13 +133,100 @@ const Create = (props) => {
                                         onClick={() =>
                                             setValues({
                                                 ...values,
-                                                rating: i + 1,
+                                                teaching_rating: i + 1,
                                             })
                                         }
-                                        onMouseEnter={() =>
-                                            setHoverRating(i + 1)
+                                        // onMouseEnter={() =>
+                                        //     setHoverRating(i + 1)
+                                        // }
+                                        // onMouseLeave={() => setHoverRating(0)}
+                                    />
+                                ))}
+                        </HStack>
+                        <FormLabel htmlFor="rating" fontWeight={"bold"}>
+                            定期テスト対策の充実度
+                        </FormLabel>
+                        <HStack spacing={1} mb={4}>
+                            {Array(5)
+                                .fill("")
+                                .map((_, i) => (
+                                    <StarIcon
+                                        key={i}
+                                        color={
+                                            i < values.study_rating ||
+                                            i < hoverRating
+                                                ? "yellow.500"
+                                                : "gray.300"
                                         }
-                                        onMouseLeave={() => setHoverRating(0)}
+                                        cursor={"pointer"}
+                                        onClick={() =>
+                                            setValues({
+                                                ...values,
+                                                study_rating: i + 1,
+                                            })
+                                        }
+                                        // onMouseEnter={() =>
+                                        //     setHoverRating(i + 1)
+                                        // }
+                                        // onMouseLeave={() => setHoverRating(0)}
+                                    />
+                                ))}
+                        </HStack>
+                        <FormLabel htmlFor="rating" fontWeight={"bold"}>
+                            自習室の環境
+                        </FormLabel>
+                        <HStack spacing={1} mb={4}>
+                            {Array(5)
+                                .fill("")
+                                .map((_, i) => (
+                                    <StarIcon
+                                        key={i}
+                                        color={
+                                            i < values.facility_rating ||
+                                            i < hoverRating
+                                                ? "yellow.500"
+                                                : "gray.300"
+                                        }
+                                        cursor={"pointer"}
+                                        onClick={() =>
+                                            setValues({
+                                                ...values,
+                                                facility_rating: i + 1,
+                                            })
+                                        }
+                                        // onMouseEnter={() =>
+                                        //     setHoverRating(i + 1)
+                                        // }
+                                        // onMouseLeave={() => setHoverRating(0)}
+                                    />
+                                ))}
+                        </HStack>
+                        <FormLabel htmlFor="rating" fontWeight={"bold"}>
+                            料金
+                        </FormLabel>
+                        <HStack spacing={1} mb={4}>
+                            {Array(5)
+                                .fill("")
+                                .map((_, i) => (
+                                    <StarIcon
+                                        key={i}
+                                        color={
+                                            i < values.cost_rating ||
+                                            i < hoverRating
+                                                ? "yellow.500"
+                                                : "gray.300"
+                                        }
+                                        cursor={"pointer"}
+                                        onClick={() =>
+                                            setValues({
+                                                ...values,
+                                                cost_rating: i + 1,
+                                            })
+                                        }
+                                        // onMouseEnter={() =>
+                                        //     setHoverRating(i + 1)
+                                        // }
+                                        // onMouseLeave={() => setHoverRating(0)}
                                     />
                                 ))}
                         </HStack>
@@ -159,7 +255,7 @@ const Create = (props) => {
                         </HStack>
                     </FormControl>
 
-                    <Button type="submit" colorScheme="blue" mt={4}>
+                    <Button type="submit" colorScheme="teal" mt={4}>
                         投稿する
                     </Button>
                 </form>

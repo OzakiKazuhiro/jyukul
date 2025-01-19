@@ -23,8 +23,8 @@ class ShopController extends Controller
 
         // 店舗の全件を取得
         $query = Shop::with('reviews', 'shopImages')
-        ->withCount('reviews')
-        ->withAvg('reviews', 'rating');
+        ->withCount('reviews');
+        // ->withAvg('reviews', 'rating');
 
         //検索条件がある場合
         if($request->has('search')){

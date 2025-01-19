@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import MainLayout from "@/Layouts/MainLayout";
-import { SmallAddIcon,EditIcon } from "@chakra-ui/icons";
+import { SmallAddIcon, EditIcon } from "@chakra-ui/icons";
 import {
     Box,
     Heading,
@@ -10,12 +10,20 @@ import {
     Button,
     useToast,
     HStack,
+    Table,
+    Thead,
+    Tbody,
+    Tfoot,
+    Tr,
+    Th,
+    Td,
+    TableCaption,
+    TableContainer,
 } from "@chakra-ui/react";
 import ReviewList from "@/Components/Organisms/ReviewList";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import "@splidejs/splide/dist/css/themes/splide-default.min.css";
 const Detail = (props) => {
-
     const toast = useToast();
 
     useEffect(() => {
@@ -69,8 +77,14 @@ const Detail = (props) => {
 
     return (
         <Box p={4}>
-            <HStack spacing={4}>
-                <Heading as="h2" size={"xl"} mb={4}>
+            <HStack
+                spacing={4}
+                p={4}
+                mb={2}
+                justifyContent="center"
+                alignItems="center"
+            >
+                <Heading as="h2" size={"xl"}>
                     {props.shop.name}
                 </Heading>
                 <Link href={route("shop.edit", { id: props.shop.id })}>
@@ -79,49 +93,20 @@ const Detail = (props) => {
                     </Button>
                 </Link>
             </HStack>
-            <Box>
-                {/* props.createdUserがnullかどうかを判定 */}
-                {/* nullの場合は「作成者: 不明」と表示 */}
-                {props.createdUser ? (
-                    <Text fontSize={{ base: 12, md: 14 }}>
-                        作成者:{" "}
-                        <Link
-                            color={"blue.400"}
-                            href={route(
-                                `shop.indexByUser`,
-                                {userId:props.createdUser.id}
-                            )}
-                        >
-                            {props.createdUser.name}さん
-                        </Link>
-                    </Text>
-                ) : (
-                    <Text fontSize={{ base: 12, md: 14 }}> 作成者: 不明 </Text>
-                )}
-                {props.updatedUser ? (
-                    <Text fontSize={{ base: 12, md: 14 }}>
-                        更新者:
-                        <Link
-                            color={"blue.400"}
-                            href={route("shop.indexByUser", {
-                                userId: props.updatedUser.id,
-                            })}
-                        >
-                            {props.updatedUser.name}さん
-                        </Link>
-                    </Text>
-                ) : (
-                    <Text fontSize={{ base: 12, md: 14 }}> 更新者: なし </Text>
-                )}
-            </Box>
+
             {props.shop.shop_images.length > 0 ? (
-                <Box w={300}>
+                <Box
+                    mx="auto"
+                    mb={4}
+                    bgColor={"gray.100"}
+                    w={{ base: "100%", sm: "400px", md: "600px", lg: "800px" }}
+                >
                     <Splide options={options}>
                         {props.shop.shop_images.map((image, index) => (
                             <SplideSlide key={index}>
                                 <Image
                                     key={image.id}
-                                    boxSize="300px"
+                                    boxSize="100%"
                                     objectFit="contain"
                                     src={
                                         import.meta.env.VITE_APP_URL +
@@ -153,8 +138,66 @@ const Detail = (props) => {
                 />
             )}
 
-            <Text mb={2}>{props.shop.description}</Text>
-            <Text mb={2}>{props.shop.location}</Text>
+            {/* テーブル */}
+            <TableContainer>
+                <Table bg="gray.50" variant="simple">
+                    <TableCaption placement="top">塾情報</TableCaption>
+                    <Tbody>
+                        <Tr>
+                            <Td>作成者</Td>
+                            <Td>
+                                {props.createdUser ? (
+                                    <Text fontSize={{ base: 12, md: 14 }}>
+                                        作成者:{" "}
+                                        <Link
+                                            color={"blue.400"}
+                                            href={route(`shop.indexByUser`, {
+                                                userId: props.createdUser.id,
+                                            })}
+                                        >
+                                            {props.createdUser.name}さん
+                                        </Link>
+                                    </Text>
+                                ) : (
+                                    <Text fontSize={{ base: 12, md: 14 }}>
+                                        不明
+                                    </Text>
+                                )}
+                            </Td>
+                        </Tr>
+                        <Tr>
+                            <Td>更新者</Td>
+                            <Td>
+                                {props.updatedUser ? (
+                                    <Text fontSize={{ base: 12, md: 14 }}>
+                                        <Link
+                                            color={"blue.400"}
+                                            href={route("shop.indexByUser", {
+                                                userId: props.updatedUser.id,
+                                            })}
+                                        >
+                                            {props.updatedUser.name}さん
+                                        </Link>
+                                    </Text>
+                                ) : (
+                                    <Text fontSize={{ base: 12, md: 14 }}>
+                                        {" "}
+                                        更新者: なし{" "}
+                                    </Text>
+                                )}
+                            </Td>
+                        </Tr>
+                        <Tr>
+                            <Td>情報</Td>
+                            <Td>{props.shop.description}</Td>
+                        </Tr>
+                        <Tr>
+                            <Td>場所</Td>
+                            <Td>{props.shop.location}</Td>
+                        </Tr>
+                    </Tbody>
+                </Table>
+            </TableContainer>
 
             {/* レビュー */}
             <Box mt={8}>

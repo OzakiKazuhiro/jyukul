@@ -40,7 +40,11 @@ class ReviewController extends Controller
         $status = "error";
         
         $request->validate([
-            'rating' => 'required|integer|between:1,5',
+            'teaching_rating' => 'required|integer|between:1,5',
+            'study_rating' => 'required|integer|between:1,5',
+            'facility_rating' => 'required|integer|between:1,5',
+            'cost_rating' => 'required|integer|between:1,5',
+            // 'rating' => 'required|integer|between:1,5',
             'comment' => 'required|string|max:255',
             'anonymous' => 'nullable|boolean',  // anonymous は省略可能な真偽値
         ]);
@@ -49,7 +53,11 @@ class ReviewController extends Controller
         $review = $reviewModel->saveReview([
             'shop_id' => $request->shop_id,
             'user_id' => $user->id,
-            'rating' => $request->rating,
+            // 'rating' => $request->rating,
+            'teaching_rating' => $request->teaching_rating,
+            'study_rating' => $request->study_rating,
+            'facility_rating' => $request->facility_rating,
+            'cost_rating' => $request->cost_rating,
             'comment' => $request->comment,
             'anonymous' => $request->anonymous, // チェックボックスの状態を保存
         ]);

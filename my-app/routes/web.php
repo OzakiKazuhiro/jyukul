@@ -44,6 +44,7 @@ Route::middleware('auth')->group(
 );
 Route::get('/shop/{id}', [ShopController::class, 'detail'])->name('shop.detail');
 Route::get('/shop/user/{userId}', [ShopController::class, 'indexByUser'])->name('shop.indexByUser');
+
 // Review
 Route::middleware('auth')->group(
     function () {
