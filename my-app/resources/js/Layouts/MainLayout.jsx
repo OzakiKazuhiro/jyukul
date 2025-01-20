@@ -43,30 +43,28 @@ const MainLayout = ({ children, title }) => {
                 placement="right"
                 onClose={onClose}
                 finalFocusRef={btnRef}
-                size={{ base: "xs", md: "sm" }}
+                size={"xs"}
             >
                 <DrawerOverlay />
                 <DrawerContent>
                     <DrawerCloseButton />
-                    <DrawerHeader>menu</DrawerHeader>
-
+                    <DrawerHeader> {auth.user.name}さんのメニュー</DrawerHeader>
                     <DrawerBody>
                         <VStack>
                             {auth.user ? (
                                 <Box display={"block"}>
-                                    <Box fontSize={"xs"} mb={4}>
-                                        {auth.user.name}さん
-                                    </Box>
                                     <VStack>
                                         <Link
                                             href={route("dashboard")}
                                             _hover={{ color: "gray.500" }}
+                                            p={2}
                                         >
-                                            ダッシュボード
+                                            マイページ
                                         </Link>
                                         <Link
                                             href={route("shop.create")}
                                             _hover={{ color: "gray.500" }}
+                                            p={2}
                                         >
                                             店舗の登録
                                         </Link>
@@ -84,6 +82,7 @@ const MainLayout = ({ children, title }) => {
                                         <Text
                                             onClick={handleLogout}
                                             cursor={"pointer"}
+                                            p={2}
                                         >
                                             ログアウト
                                         </Text>
@@ -168,6 +167,7 @@ const MainLayout = ({ children, title }) => {
                         >
                             <HamburgerIcon
                                 ref={btnRef}
+                                color={"white"}
                                 onClick={onOpen}
                                 cursor={"pointer"}
                                 fontSize={"xl"}

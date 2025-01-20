@@ -20,7 +20,8 @@ import { router } from "@inertiajs/react";
 import ReviewList from "@/Components/Organisms/ReviewList";
 
 const Home = (props) => {
-    console.log(props.shops.links);
+    // console.log(props.shops.links);
+    console.log(props);
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(false);
     const toast = useToast();
@@ -49,9 +50,6 @@ const Home = (props) => {
     };
 
     const getButtonLabel = (label) => {
-        // if (label.includes("previous")) return "前へ";
-        // if (label.includes("next")) return "次へ";
-        // ↑日本語化するパッケージを入れてしまったのが原因と予想
         if (label.includes("&raquo;")) return "次へ";
         if (label.includes("&laquo;")) return "前へ";
         return label;
@@ -156,8 +154,7 @@ const Home = (props) => {
                                                     : shop.description}
                                             </Text>
                                             <Text>
-                                                レビュー平均:{" "}
-                                                {shop.reviews_avg_rating}(
+                                                レビュー件数: (
                                                 {shop.reviews_count}件)
                                             </Text>
                                         </VStack>

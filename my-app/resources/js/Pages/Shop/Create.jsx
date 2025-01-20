@@ -1,5 +1,5 @@
-import React from 'react';
-import MainLayout from '@/Layouts/MainLayout';
+import React from "react";
+import MainLayout from "@/Layouts/MainLayout";
 import {
     Box,
     Button,
@@ -11,41 +11,46 @@ import {
     Text,
     useToast,
 } from "@chakra-ui/react";
-import { router, useForm } from '@inertiajs/react';
+import { router, useForm } from "@inertiajs/react";
 
 const Create = () => {
-  const { data, setData, post, errors } = useForm({
-    name: "",
-    location: "",
-    description: "",
-    images: [],
-  });
+    const { data, setData, post, errors } = useForm({
+        name: "",
+        location: "",
+        description: "",
+        images: [],
+    });
 
-  const toast = useToast();
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    if (files.length > 3) {
-      toast({
-        title: "画像は3つまで選択可能です。",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      })
+    const toast = useToast();
+    const handleImageChange = (e) => {
+        const files = Array.from(e.target.files);
+        if (files.length > 3) {
+            toast({
+                title: "画像は3つまで選択可能です。",
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+            });
 
-      e.target.value = "";
-      return;
-    }
-    setData("images", files);
-  };
+            e.target.value = "";
+            return;
+        }
+        setData("images", files);
+    };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    router.post(route("shop.store"),data);
-  }
-    
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        router.post(route("shop.store"), data);
+    };
+
     return (
-        <Box p={4} m={4} w={{ base: "90%", md: 700 }}>
-            <Heading as="h2" fontSize={{ base: 18, md: 24 }} mb={6}>
+        <Box p={4} m={4}>
+            <Heading
+                as="h2"
+                textAlign="center"
+                fontSize={{ base: 18, md: 24 }}
+                mb={6}
+            >
                 店舗新規作成
             </Heading>
             <form onSubmit={handleSubmit}>
@@ -86,8 +91,8 @@ const Create = () => {
                     {/* プレビュー */}
                     {data.images.length > 0 && (
                         <>
-                            <Text mb={2}>プレビュー</Text>  
-                            <Box display={"flex"} p={4} bg={"gray.200"}>
+                            <Text mb={2}>プレビュー</Text>
+                            <Box display={"flex"} p={4} bg={"gray.200"} mb={4}>
                                 {data.images.map((image) => (
                                     <Box key={image.name} px={2}>
                                         <img
@@ -100,14 +105,25 @@ const Create = () => {
                             </Box>
                         </>
                     )}
-                    <Input
-                        type="file"
-                        id="images"
-                        accept=".jpg,.jpeg,.png"
-                        multiple
-                        name="images"
-                        onChange={handleImageChange}
-                    />
+                    <Box>
+                        <Button
+                            as="label"
+                            htmlFor="fileInput"
+                            colorScheme="teal"
+                            cursor="pointer"
+                        >
+                            ファイルを選択
+                        </Button>
+                        <Input
+                            type="file"
+                            id="fileInput"
+                            accept=".jpg,.jpeg,.png"
+                            multiple
+                            name="images"
+                            onChange={handleImageChange}
+                            display="none" // ファイル選択のネイティブボタンを非表示に
+                        />
+                    </Box>
                 </FormControl>
                 <Button type="submit" colorScheme="teal">
                     作成
@@ -115,6 +131,6 @@ const Create = () => {
             </form>
         </Box>
     );
-}
+};
 Create.layout = (page) => <MainLayout children={page} title={"店舗新規作成"} />;
 export default Create;

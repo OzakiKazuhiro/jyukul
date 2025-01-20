@@ -21,6 +21,29 @@ class Review extends Model
         'anonymous',
     ];
 
+// app/Models/Review.php
+
+public function getAverageRatingAttribute()
+{
+    $ratings = [
+        $this->teaching_rating,
+        $this->study_rating,
+        $this->facility_rating,
+        $this->cost_rating
+    ];
+    
+    // nullを除外して平均を計算
+    $validRatings = array_filter($ratings, function($rating) {
+        return !is_null($rating);
+    });
+    
+    if (empty($validRatings)) {
+        return null;
+    }
+    
+    return round(array_sum($validRatings) / count($validRatings), 1);
+}
+
     // shopsテーブルとのリレーション
     public function shop()
     {

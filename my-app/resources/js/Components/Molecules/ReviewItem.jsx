@@ -16,7 +16,17 @@ const ReviewItem = ({ review }) => {
             mb={4}
         >
             <Flex alignItems="center" justifyContent={"space-between"} mb={4}>
-                <Text>総合レビュー評価</Text>
+                <Box>
+                    {/* アクセサの average_rating を表示 */}
+                    {review.average_rating ? (
+                        <Text fontWeight="bold">
+                            総合レビュー：{review.average_rating} / 5.0
+                        </Text>
+                    ) : (
+                        <Text color="gray.500">総合レビュー：評価なし</Text>
+                    )}
+                </Box>
+
                 <UserName
                     name={review.user.name}
                     anonymous={review.anonymous}

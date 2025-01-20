@@ -39,7 +39,8 @@ class ShopController extends Controller
         $newReviews = Review::with('shop', 'user')
             ->orderBy('created_at', 'desc')
             ->take(5)
-            ->get();
+            ->get()
+            ->append('average_rating');
 
         return Inertia::render('Home', [
             'shops' => $shops,
