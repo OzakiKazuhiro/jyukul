@@ -20,12 +20,13 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-// または既存のルートに追加
-Route::match(['patch', 'post'], 'profile', [ProfileController::class, 'update'])->name('profile.update');
-
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+// ファイルアップロードの制限：（アバター機能で学習）
+// HTMLのform要素は、ファイルアップロードを含む場合、実際には常にPOSTメソッドを使用します
+// PUTやPATCHメソッドでは、multipart/form-dataを直接扱えないという技術的制限があります
+//     ↓↓
+    Route::match(['patch', 'post'], 'profile', [ProfileController::class, 'update'])->name('profile.update');
     // Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });

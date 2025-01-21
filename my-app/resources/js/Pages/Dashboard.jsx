@@ -23,7 +23,7 @@ export default function Dashboard({}) {
     const [isEditing, setIsEditing] = useState(false);
 
     const { data, setData, post, patch, processing, errors, reset } = useForm({
-        username: auth.user.name,
+        username: auth.name,
         email: auth.user.email,
         avatar: null,
     });
@@ -31,21 +31,17 @@ export default function Dashboard({}) {
     const handleSubmit = (e) => {
         e.preventDefault();
         const formData = new FormData();
-        formData.append("_method", "PATCH");
-        formData.append("name", data.username);
+        formData.append("_method", "PATCH"); // Method spoofing
+        formData.append("name", data.name);
         formData.append("email", data.email);
         if (data.avatar) {
             formData.append("avatar", data.avatar);
         }
 
-        //FormDataの中身を確認;
-        for (let [key, value] of formData.entries()) {
-            console.log(key, value);
-        }
-
-        patch(route("profile.update"), formData, {
+        // Using post instead of patch for file upload
+        post(route("profile.update"), {
             onSuccess: () => {
-                console.log("プロフィール更新成功"); // 成功時のログ
+                console.log("プロフィール更新成功");
                 setIsEditing(false);
                 toast({
                     title: "プロフィールを更新しました",
@@ -89,16 +85,16 @@ export default function Dashboard({}) {
                     {isEditing ? (
                         <form onSubmit={handleSubmit}>
                             <VStack spacing={4}>
-                                <FormControl isInvalid={errors.username}>
+                                <FormControl isInvalid={errors.name}>
                                     <FormLabel>ユーザー名</FormLabel>
                                     <Input
-                                        value={data.username}
+                                        value={data.name}
                                         onChange={(e) =>
-                                            setData("username", e.target.value)
+                                            setData("name", e.target.value)
                                         }
                                     />
                                     <FormErrorMessage>
-                                        {errors.username}
+                                        {errors.name}
                                     </FormErrorMessage>
                                 </FormControl>
 

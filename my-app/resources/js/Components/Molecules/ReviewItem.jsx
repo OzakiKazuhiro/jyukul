@@ -44,10 +44,13 @@ const ReviewItem = ({ review }) => {
                 <VStack>
                     <WrapItem>
                         <Avatar
-                            name={review.user.name}
-                            src={auth.user.avatar_url}
+                            name={review.anonymous ? "?" : review.user.name}
+                            src={
+                                review.anonymous ? null : review.user.avatar_url
+                            }
                             border="2px"
                             borderColor="gray.200"
+                            bg={review.anonymous ? "gray.400" : undefined} // 匿名時の背景色
                         />
                     </WrapItem>
                     <UserName
