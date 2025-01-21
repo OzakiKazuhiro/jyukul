@@ -12,8 +12,9 @@ import {
     Spinner,
     WrapItem,
     SimpleGrid,
+    Wrap,
+    Avatar,
 } from "@chakra-ui/react";
-import { StarIcon } from "@chakra-ui/icons";
 import MainLayout from "../Layouts/MainLayout";
 import React, { useState } from "react";
 import { router } from "@inertiajs/react";

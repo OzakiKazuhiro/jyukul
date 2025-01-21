@@ -2,8 +2,19 @@ import React from "react";
 import StarRating from "../Atoms/StarRating";
 import UserName from "../Atoms/UserName";
 import { usePage } from "@inertiajs/react";
-import { Box, Text, Link, Button, HStack, Flex } from "@chakra-ui/react";
+import {
+    Box,
+    Text,
+    Link,
+    Button,
+    HStack,
+    Flex,
+    WrapItem,
+    Avatar,
+    VStack,
+} from "@chakra-ui/react";
 const ReviewItem = ({ review }) => {
+    console.log(review);
     const { auth } = usePage().props;
     return (
         <Box
@@ -15,23 +26,37 @@ const ReviewItem = ({ review }) => {
             boxShadow={"lg"}
             mb={4}
         >
-            <Flex alignItems="center" justifyContent={"space-between"} mb={4}>
+            <Flex alignItems={"center"} justifyContent={"space-between"} mb={2}>
                 <Box>
-                    {/* アクセサの average_rating を表示 */}
+                    {review.shop?.name && (
+                        <Text fontWeight="bold" fontSize="lg">
+                            {review.shop.name}
+                        </Text>
+                    )}
                     {review.average_rating ? (
-                        <Text fontWeight="bold">
+                        <Text fontWeight="bold" fontSize="lg">
                             総合レビュー：{review.average_rating} / 5.0
                         </Text>
                     ) : (
                         <Text color="gray.500">総合レビュー：評価なし</Text>
                     )}
                 </Box>
-
-                <UserName
-                    name={review.user.name}
-                    anonymous={review.anonymous}
-                />
+                <VStack>
+                    <WrapItem>
+                        <Avatar
+                            name={review.user.name}
+                            src={auth.user.avatar_url}
+                            border="2px"
+                            borderColor="gray.200"
+                        />
+                    </WrapItem>
+                    <UserName
+                        name={review.user.name}
+                        anonymous={review.anonymous}
+                    />
+                </VStack>
             </Flex>
+
             <HStack>
                 <Text style={{ whiteSpace: "pre-wrap" }} w={24}>
                     教え方

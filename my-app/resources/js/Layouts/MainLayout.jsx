@@ -48,7 +48,11 @@ const MainLayout = ({ children, title }) => {
                 <DrawerOverlay />
                 <DrawerContent>
                     <DrawerCloseButton />
-                    <DrawerHeader> {auth.user.name}さんのメニュー</DrawerHeader>
+                    <DrawerHeader>
+                        {auth.user
+                            ? `${auth.user.name} さんのメニュー`
+                            : "未ログインユーザー"}
+                    </DrawerHeader>
                     <DrawerBody>
                         <VStack>
                             {auth.user ? (

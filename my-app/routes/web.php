@@ -20,9 +20,13 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+// または既存のルートに追加
+Route::match(['patch', 'post'], 'profile', [ProfileController::class, 'update'])->name('profile.update');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    // Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
@@ -56,5 +60,8 @@ Route::middleware('auth')->group(
     }
 );
 Route::get('/review/user/{userId}', [ReviewController::class, 'indexByUser'])->name('review.indexByUser');
+
+
+
 
 require __DIR__.'/auth.php';

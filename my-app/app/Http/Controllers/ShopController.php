@@ -71,11 +71,14 @@ class ShopController extends Controller
         // 作成者と更新者のユーザーデータを取得
         $createdUser = User::find($shop->created_by);
         $updatedUser = User::find($shop->updated_by);
+
         // レビューを取得
-        $reviews = Review::with('user')
+        $reviews = Review::with('shop','user')
             ->where('shop_id', $id)
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->get()
+            ->append('average_rating');
+
         // dd($reviews);
         return Inertia::render('Shop/Detail', [
             'shop' => $shop,
