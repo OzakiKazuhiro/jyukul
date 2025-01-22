@@ -16,6 +16,7 @@ use Nette\Utils\Random;
 
 class ShopController extends Controller
 {
+
     public function index(Request $request)
     {
         // クエリパラメーターからステータスを取得
@@ -34,7 +35,14 @@ class ShopController extends Controller
                 ->orWhere('description', 'like', '%' . $search . '%');
         }
         $shops = $query->paginate(10);
-        
+
+        // 各ショップの平均評価を計算
+        $shops->getCollection()->transform(function ($shop) {
+        $shop->average_rating = $shop->getAverageRatingAttribute();
+        return $shop;
+    });
+
+
         //新着のレビューを5件取得
         $newReviews = Review::with('shop', 'user')
             ->orderBy('created_at', 'desc')
@@ -298,4 +306,5 @@ class ShopController extends Controller
             'status' => $status,
         ]);
     }
+
 }

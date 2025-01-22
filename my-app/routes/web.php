@@ -44,7 +44,7 @@ Route::middleware('auth')->group(
         Route::post('/shop/store',[ShopController::class, 'store'])->name('shop.store');  
         Route::get('/shop/edit/{id}',[ShopController::class, 'edit'])->name('shop.edit');
         Route::post('/shop/update',[ShopController::class, 'update'])->name('shop.update');
-        Route::delete('/shop/delete/{id}',[ShopController::class, 'destroy'])->name('shop.destroy');   
+        Route::delete('/shop/delete/{id}',[ShopController::class, 'destroy'])->name('shop.destroy');
     }
 );
 Route::get('/shop/{id}', [ShopController::class, 'detail'])->name('shop.detail');

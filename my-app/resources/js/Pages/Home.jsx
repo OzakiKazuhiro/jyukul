@@ -137,7 +137,8 @@ const Home = (props) => {
                                             <Image
                                                 boxSize="100px"
                                                 objectFit="cover"
-                                                src="https://via.placeholder.com/100"
+                                                // src="https://via.placeholder.com/100"
+                                                src="/images/school_default.jpeg" // ここを変更
                                                 alt={shop.name}
                                             />
                                         )}
@@ -157,6 +158,11 @@ const Home = (props) => {
                                             <Text>
                                                 レビュー件数: (
                                                 {shop.reviews_count}件)
+                                            </Text>
+                                            <Text>
+                                                総合評価:{" "}
+                                                {shop.average_rating ||
+                                                    "評価なし"}
                                             </Text>
                                         </VStack>
                                     </HStack>

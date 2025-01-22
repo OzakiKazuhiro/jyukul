@@ -35,24 +35,6 @@ class Shop extends Model
         return $this->hasMany(ShopImage::class);
     }
 
-    // 平均評価を小数点第一位まで取得
-    public function getReviewsAvgRatingAttribute()
-    {
-        return round($this->reviews()->avg('rating'), 1);
-    }
-
-    public function saveShop($data)
-    {
-        $this->name = $data['name'];
-        $this->location = $data['location'];
-        $this->description = $data['description'];
-        $this->created_by = $data['created_by'];
-        $this->updated_by = $data['updated_by'];
-
-        $this->save();
-
-        return $this;
-    }
 
     public function updateShop($data)
     {
@@ -67,4 +49,35 @@ class Shop extends Model
 
         return $shop;
     }
+
+
+    public function getAverageRatingAttribute()
+    {
+        // reviewsリレーションを取得（必要なカラムのみ選択）
+        $reviews = $this->reviews()->get(['teaching_rating', 'study_rating', 'facility_rating', 'cost_rating']);
+    
+        if ($reviews->isEmpty()) {
+            return null;
+        }
+    
+        $totalRating = 0;
+        $count = 0;
+    
+        foreach ($reviews as $review) {
+            $average = $review->getAverageRatingAttribute();
+            if ($average !== null) {
+                $totalRating += $average;
+                $count++;
+            }
+        }
+    
+        if ($count === 0) {
+            return null;
+        }
+    
+        $averageRating = $totalRating / $count;
+        return number_format($averageRating, 1); // 小数点第1位まで表示
+    }
+
+
 }
