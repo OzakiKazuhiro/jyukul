@@ -51,11 +51,11 @@ const Create = () => {
                 fontSize={{ base: 18, md: 24 }}
                 mb={6}
             >
-                店舗新規作成
+                学習塾・新規作成
             </Heading>
             <form onSubmit={handleSubmit}>
                 <FormControl id="name" mb={4}>
-                    <FormLabel fontWeight={"bold"}>店舗名</FormLabel>
+                    <FormLabel fontWeight={"bold"}>学習塾名</FormLabel>
                     <Input
                         isRequired
                         type="text"
@@ -87,7 +87,9 @@ const Create = () => {
                     />
                 </FormControl>
                 <FormControl id="images" mb={4}>
-                    <FormLabel fontWeight={"bold"}>画像</FormLabel>
+                    <FormLabel fontWeight={"bold"}>
+                        画像※３つまで選択可能（jpeg,png
+                    </FormLabel>
                     {/* プレビュー */}
                     {data.images.length > 0 && (
                         <>
@@ -117,7 +119,7 @@ const Create = () => {
                         <Input
                             type="file"
                             id="fileInput"
-                            accept=".jpg,.jpeg,.png"
+                            accept="image/jpeg, image/png, image/jpg, image/webp"
                             multiple
                             name="images"
                             onChange={handleImageChange}

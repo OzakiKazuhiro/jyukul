@@ -5,6 +5,7 @@ import {
     Heading,
     HStack,
     Link,
+    Flex,
     IconButton,
     Menu,
     MenuButton,
@@ -20,8 +21,31 @@ import {
     DrawerCloseButton,
     useDisclosure,
     VStack,
+    WrapItem,
+    Avatar,
 } from "@chakra-ui/react";
 import { HamburgerIcon, SettingsIcon } from "@chakra-ui/icons";
+
+// Avatarコンポーネントをラップして画像ロード状態を管理
+const LoadableAvatar = ({ src, name, ...rest }) => {
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    useEffect(() => {
+        if (src) {
+            const img = new Image();
+            img.src = src;
+            img.onload = () => setIsLoaded(true);
+        } else {
+            setIsLoaded(false); // srcがない場合はロード済みとみなさない
+        }
+    }, [src]);
+
+    if (!isLoaded) {
+        return null; // ロード中は何も表示しない（または<Spinner />を表示）
+    }
+
+    return <Avatar src={src} name={name} {...rest} />;
+};
 
 const MainLayout = ({ children, title }) => {
     const { auth, csrf_token } = usePage().props;
@@ -72,17 +96,6 @@ const MainLayout = ({ children, title }) => {
                                         >
                                             店舗の登録
                                         </Link>
-
-                                        {/* Inertiaを使うパターン */}
-                                        {/* <InertiaLink
-                                            href={route("logout")}
-                                            method="post"
-                                            onClick={onClose}
-                                            _hover={{ color: "gray.500" }}
-                                        >
-                                            ログアウト
-                                        </InertiaLink> */}
-                                        {/* handleLogoutを使うパターン */}
                                         <Text
                                             onClick={handleLogout}
                                             cursor={"pointer"}
@@ -104,19 +117,24 @@ const MainLayout = ({ children, title }) => {
                     </DrawerBody>
                 </DrawerContent>
             </Drawer>
-            <header>
-                <Box bg={"teal.700"}>
+
+            <Flex
+                direction="column"
+                minHeight="100vh" // 画面の高さいっぱいに広がる
+            >
+                {/* ヘッダー */}
+                <Box bg={"teal.700"} flexShrink={0}>
                     <HStack
                         justifyContent={"space-between"}
                         alignItems={"center"}
                         py={{ base: 0, md: 3 }}
                         px={{ base: 1, md: 2 }}
                     >
-                        {/* ヘッダー */}
                         <Heading
                             as="h1"
                             size={{ base: "xs", md: "md" }}
                             color={"white"}
+                            pl={2}
                         >
                             <Link
                                 href={route("shop.index")}
@@ -132,17 +150,30 @@ const MainLayout = ({ children, title }) => {
                             fontWeight={"bold"}
                         >
                             {auth.user ? (
-                                <Box>
-                                    <Text
+                                <Box pr={2}>
+                                    {/* <Text
+                                            onClick={onOpen}
+                                            cursor={"pointer"}
+                                            ref={btnRef}
+                                            display={"flex"}
+                                            alignItems={"center"}
+                                        >
+                                            <SettingsIcon mx={1} />
+                                            {auth.user.name}さん
+                                        </Text> */}
+                                    <Avatar
                                         onClick={onOpen}
                                         cursor={"pointer"}
                                         ref={btnRef}
-                                        display={"flex"}
-                                        alignItems={"center"}
-                                    >
-                                        {auth.user.name}さん
-                                        <SettingsIcon mx={1} />
-                                    </Text>
+                                        src={auth.user.avatar_url}
+                                        name={auth.user.name}
+                                        size="sm"
+                                        // border="2px"
+                                        borderColor="gray.200"
+                                        color="black"
+                                        backgroundColor={"white"}
+                                        fallback={null} // テキスト表示を防止
+                                    />
                                 </Box>
                             ) : (
                                 <>
@@ -176,40 +207,29 @@ const MainLayout = ({ children, title }) => {
                                 cursor={"pointer"}
                                 fontSize={"xl"}
                             />
-                            {/* <Menu>
-                                <MenuButton
-                                    as={IconButton}
-                                    aria-label="Options"
-                                    icon={<HamburgerIcon />}
-                                    variant="outline"
-                                    colorScheme="white"
-                                />
-                                <MenuList>
-                                    <MenuItem icon={<SettingsIcon />}>
-                                        マイページ
-                                    </MenuItem>
-                                    <MenuItem>店舗の登録</MenuItem>
-                                </MenuList>
-                            </Menu> */}
                         </Box>
                     </HStack>
                 </Box>
-            </header>
-            <Box>{children}</Box>
-            {/* フッター */}
-            <Box>
-                <Box
-                    bg={"teal.700"}
-                    color={"white"}
-                    fontWeight={"bold"}
-                    textAlign={"center"}
-                    py={{ base: 2, md: 3 }}
-                >
-                    <Text fontSize={{ base: 13, md: 16 }}>
-                        &copy; 2025 {import.meta.env.VITE_APP_NAME}
-                    </Text>
+
+                {/* メインコンテンツ */}
+                <Box flexGrow={1}>{children}</Box>
+
+                {/* フッター */}
+                <Box>
+                    <Box
+                        bg={"teal.700"}
+                        color={"white"}
+                        fontWeight={"bold"}
+                        textAlign={"center"}
+                        py={{ base: 2, md: 3 }}
+                        flexShrink={0} // フッターを固定
+                    >
+                        <Text fontSize={{ base: 13, md: 16 }}>
+                            &copy; 2025 {import.meta.env.VITE_APP_NAME}
+                        </Text>
+                    </Box>
                 </Box>
-            </Box>
+            </Flex>
         </>
     );
 };

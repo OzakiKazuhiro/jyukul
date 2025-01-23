@@ -1,6 +1,7 @@
 import React from "react";
 import StarRating from "../Atoms/StarRating";
 import UserName from "../Atoms/UserName";
+import { FaStar, FaStarHalf } from "react-icons/fa";
 import { usePage } from "@inertiajs/react";
 import {
     Box,
@@ -13,9 +14,35 @@ import {
     Avatar,
     VStack,
 } from "@chakra-ui/react";
+
+const AverageRatingStarDisplay = ({ averageRating }) => {
+    const fullStars = Math.floor(averageRating); // 満点の星の数
+    const hasHalfStar = averageRating % 1 !== 0; // 小数第1位が0でないかどうか
+
+    return (
+        <HStack spacing={1}>
+            {Array(5)
+                .fill("")
+                .map((_, i) => {
+                    if (i < fullStars) {
+                        // 満点の星
+                        return <FaStar key={i} color="gold" size="25px" />;
+                    } else if (hasHalfStar && i === fullStars) {
+                        // 半分の星
+                        return <FaStarHalf key={i} color="gold" size="25px" />;
+                    } else {
+                        // 空の星
+                        return <FaStar key={i} color="gray" size="25px" />;
+                    }
+                })}
+        </HStack>
+    );
+};
+
 const ReviewItem = ({ review }) => {
     console.log(review);
     const { auth } = usePage().props;
+
     return (
         <Box
             key={review.id}
@@ -29,14 +56,19 @@ const ReviewItem = ({ review }) => {
             <Flex alignItems={"center"} justifyContent={"space-between"} mb={2}>
                 <Box>
                     {review.shop?.name && (
-                        <Text fontWeight="bold" fontSize="lg">
+                        <Text fontWeight="bold" fontSize="lg" mb={2}>
                             {review.shop.name}
                         </Text>
                     )}
                     {review.average_rating ? (
-                        <Text fontWeight="bold" fontSize="lg">
-                            総合レビュー：{review.average_rating} / 5.0
-                        </Text>
+                        <VStack align="start">
+                            <AverageRatingStarDisplay
+                                averageRating={review.average_rating}
+                            />
+                            <Text fontWeight="bold" fontSize="lg">
+                                総合評価：{review.average_rating} / 5.0
+                            </Text>
+                        </VStack>
                     ) : (
                         <Text color="gray.500">総合レビュー：評価なし</Text>
                     )}
@@ -103,7 +135,7 @@ const ReviewItem = ({ review }) => {
             <Box mt={3} w={"100%"} display={"flex"} justifyContent={"flex-end"}>
                 {auth.user && auth.user.id === review.user_id && (
                     <Link href={`/review/edit/${review.id}`}>
-                        <Button colorScheme={"blue"} fontSize={"14"}>
+                        <Button colorScheme={"teal"} fontSize={"14"}>
                             編集
                         </Button>
                     </Link>

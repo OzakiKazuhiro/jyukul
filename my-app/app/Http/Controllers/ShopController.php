@@ -9,6 +9,7 @@ use App\Models\Review;
 use App\Models\ShopImage;
 use App\Models\User;
 use Exception;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -17,45 +18,98 @@ use Nette\Utils\Random;
 class ShopController extends Controller
 {
 
+    // public function index(Request $request)
+    // {
+    //     // クエリパラメーターからステータスを取得
+    //     $status = request('status');
+
+    //     // 店舗の全件を取得
+    //     $query = Shop::with('reviews', 'shopImages')
+    //     ->withCount('reviews');
+
+    //     $shops = $query->paginate(10);
+
+    //     // 各ショップの平均評価を計算
+    //     $shops->getCollection()->transform(function ($shop) {
+    //     $shop->average_rating = $shop->getAverageRatingAttribute();
+    //     return $shop;
+    // });
+
+
+    //     //新着のレビューを6件取得
+    //     $newReviews = Review::with('shop', 'user')
+    //         ->orderBy('created_at', 'desc')
+    //         ->take(6)
+    //         ->get()
+    //         ->append('average_rating');
+
+    //     return Inertia::render('Home', [
+    //         'shops' => $shops,
+    //         'newReviews' => $newReviews,
+    //         'status' => $status,
+    //     ]); 
+    // }
+
+
     public function index(Request $request)
     {
         // クエリパラメーターからステータスを取得
         $status = request('status');
-
+    
         // 店舗の全件を取得
-        $query = Shop::with('reviews', 'shopImages')
-        ->withCount('reviews');
-        // ->withAvg('reviews', 'rating');
-
-        //検索条件がある場合
-        if($request->has('search')){
+        $query = Shop::with('shopImages');
+    
+        // 検索条件がある場合
+        if ($request->has('search')) {
             $search = $request->search;
-            $query->with('reviews', 'shopImages')->where('name', 'like', '%' . $search . '%')
+            $query->where('name', 'like', '%' . $search . '%')
                 ->orWhere('location', 'like', '%' . $search . '%')
                 ->orWhere('description', 'like', '%' . $search . '%');
         }
+    
+        // 並べ替え条件
+    if ($request->has('sortBy')) {
+        switch ($request->sortBy) {
+            case 'rating_high':
+                $query->orderByDesc('average_rating'); // 総合評価の高い順
+                break;
+            case 'teaching_rating_high':
+                $query->orderByDesc('average_teaching_rating'); // 講師の教え方の評価が高い順
+                break;
+            case 'study_rating_high':
+                $query->orderByDesc('average_study_rating'); // 定期テスト対策・受験対策の充実度が高い順
+                break;
+            case 'facility_rating_high':
+                $query->orderByDesc('average_facility_rating'); // 自習室の環境が良い順
+                break;
+            case 'cost_rating_high':
+                $query->orderByDesc('average_cost_rating'); // 料金対効果が高い順
+                break;
+            case 'review_count':
+                $query->orderByDesc('reviews_count'); // レビュー数が多い順
+                break;
+            default:
+                // デフォルトの並べ替え（指定なし）
+                break;
+        }
+    }
+    
         $shops = $query->paginate(10);
-
-        // 各ショップの平均評価を計算
-        $shops->getCollection()->transform(function ($shop) {
-        $shop->average_rating = $shop->getAverageRatingAttribute();
-        return $shop;
-    });
-
-
-        //新着のレビューを5件取得
+    
+        // 新着のレビューを5件取得
         $newReviews = Review::with('shop', 'user')
             ->orderBy('created_at', 'desc')
-            ->take(5)
+            ->take(6)
             ->get()
             ->append('average_rating');
-
+    
         return Inertia::render('Home', [
             'shops' => $shops,
             'newReviews' => $newReviews,
             'status' => $status,
-        ]); 
+        ]);
     }
+
 
     public function indexByUser($userId)
     {
@@ -114,6 +168,10 @@ class ShopController extends Controller
             'name' => 'required|string|max:255',
             'location' => 'required|string',
             'description' => 'required|string',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ],[
+            'images.*.mimes' => '許可されている画像形式はjpeg、png、jpg、webpです。',
+            'images.*.max' => '画像ファイルのサイズは2MB以下にしてください。',
         ]);
         //トランザクションを開始
         DB::beginTransaction();
@@ -192,6 +250,7 @@ class ShopController extends Controller
             'name' => 'required|string|max:255',
             'location' => 'required|string',
             'description' => 'required|string',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
         //トランザクションを開始
@@ -208,23 +267,38 @@ class ShopController extends Controller
             ]);
 
             //既存の画像の削除
-            if($request->existingImages)
-            {
-                $existingImages = $request->existingImages;
-                // 画像のIDのみを取得
-                $existingImageIds = array_column($existingImages, 'id');
+            // if($request->existingImages)
+            // {
+            //     $existingImages = $request->existingImages;
+            //     // 画像のIDのみを取得
+            //     $existingImageIds = array_column($existingImages, 'id');
                 
-                $arrayShopImageIds = DB::table('shop_images')->where('shop_id', $shop->id)->get(['id'])->toArray();
-                $shopImageIds = array_column($arrayShopImageIds, 'id');
-                // IDを比較します
-                $deleteImageIds = array_diff($shopImageIds, $existingImageIds);
+            //     $arrayShopImageIds = DB::table('shop_images')->where('shop_id', $shop->id)->get(['id'])->toArray();
+            //     $shopImageIds = array_column($arrayShopImageIds, 'id');
+            //     // IDを比較します
+            //     $deleteImageIds = array_diff($shopImageIds, $existingImageIds);
 
-                if (count($deleteImageIds) > 0) {
-                    // 削除する画像のIDを指定して削除
-                    DB::table('shop_images')->whereIn('id', $deleteImageIds)->delete();
+            //     if (count($deleteImageIds) > 0) {
+            //         // 削除する画像のIDを指定して削除
+            //         DB::table('shop_images')->whereIn('id', $deleteImageIds)->delete();
+            //     }
+            // }
+
+
+        // 既存の画像を削除
+        if ($request->has('deletedImages')) {
+            foreach ($request->deletedImages as $imageId) {
+                $image = ShopImage::find($imageId);
+                if ($image) {
+                    // ストレージから画像を削除
+                    Storage::delete('public/shop_images/' . $image->file_name);
+                    // データベースから画像を削除
+                    $image->delete();
                 }
             }
-            
+        }
+
+
             // 新規画像の保存
             if($request->file("images"))
             {
@@ -272,39 +346,72 @@ class ShopController extends Controller
     }
 
     // 店舗の削除
+    // public function destroy($id)
+    // {
+    //     $status = "error";
+    //     $shop = Shop::find($id);
+    //     //トランザクションを開始
+    //     DB::beginTransaction();
+    //     try{
+    //         //店舗の削除
+    //         $shop->delete();
+
+    //         // 店舗の画像を削除
+    //         // 店舗画像のIDのみを取得
+    //         $shopImageIds = ShopImage::where('shop_id', $id)->get(['id']);
+    //         if($shopImageIds->count() > 0){
+    //             $shopImageIds = $shopImageIds->toArray();
+    //             // $shopImageIds = array_column($shopImageIds, 'id');
+    //             dd($shopImageIds);
+    //             DB::whereIn($shopImageIds)->delete();
+    //         }
+            
+    //         // コミット
+    //         DB::commit();
+    //         $status = 'shop-deleted';
+    //     }catch(Exception $e){
+    //         //失敗した時の処理
+    //         $message = $e->getMessage();
+    //         Log::error($message);
+    //         DB::rollBack();
+    //         throw $e;
+    //     }
+    //     return redirect()->route('shop.index', [
+    //         'status' => $status,
+    //     ]);
+    // }
+
     public function destroy($id)
     {
-        $status = "error";
-        $shop = Shop::find($id);
-        //トランザクションを開始
-        DB::beginTransaction();
-        try{
-            //店舗の削除
-            $shop->delete();
+    $status = "error";
+    $shop = Shop::find($id);
 
-            // 店舗の画像を削除
-            // 店舗画像のIDのみを取得
-            $shopImageIds = ShopImage::where('shop_id', $id)->get(['id']);
-            if($shopImageIds->count() > 0){
-                $shopImageIds = $shopImageIds->toArray();
-                // $shopImageIds = array_column($shopImageIds, 'id');
-                dd($shopImageIds);
-                DB::whereIn($shopImageIds)->delete();
-            }
-            
-            // コミット
-            DB::commit();
-            $status = 'shop-deleted';
-        }catch(Exception $e){
-            //失敗した時の処理
-            $message = $e->getMessage();
-            Log::error($message);
-            DB::rollBack();
-            throw $e;
-        }
-        return redirect()->route('shop.index', [
-            'status' => $status,
-        ]);
+    // トランザクションを開始
+    DB::beginTransaction();
+    try {
+        // 関連するレビューを削除
+        Review::where('shop_id', $id)->delete();
+
+        // 関連する店舗画像を削除
+        ShopImage::where('shop_id', $id)->delete();
+
+        // 店舗を削除
+        $shop->delete();
+
+        // コミット
+        DB::commit();
+        $status = 'shop-deleted';
+    } catch (Exception $e) {
+        // 失敗した時の処理
+        $message = $e->getMessage();
+        Log::error($message);
+        DB::rollBack();
+        throw $e;
     }
+
+    return redirect()->route('shop.index', [
+        'status' => $status,
+    ]);
+}
 
 }

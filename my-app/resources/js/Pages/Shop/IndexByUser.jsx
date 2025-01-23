@@ -1,15 +1,24 @@
 import React from "react";
 import MainLayout from "@/Layouts/MainLayout";
-import { Box, Heading,VStack,HStack,Image,Link,Text } from "@chakra-ui/react";
+import {
+    Box,
+    Heading,
+    VStack,
+    HStack,
+    Image,
+    Link,
+    Text,
+} from "@chakra-ui/react";
 
 const IndexByUser = (props) => {
+    console.log(props);
     return (
         <Box>
             <Box p={4}>
                 {props.shops.length > 0 ? (
                     <Box>
                         <Heading m={4} fontSize={{ base: "24", md: "36" }}>
-                            {props.user.name}さんの関連した店舗一覧
+                            {props.user.name}さんが登録した学習塾一覧
                         </Heading>
                         <VStack spacing={4} align="stretch">
                             {props.shops.map((shop) => (
@@ -30,7 +39,7 @@ const IndexByUser = (props) => {
                                             <Image
                                                 boxSize="100px"
                                                 objectFit="cover"
-                                                src="https://via.placeholder.com/100"
+                                                src={`/${shop.shop_images[0].file_path}`}
                                                 alt={shop.name}
                                             />
                                             <VStack align={"start"}>

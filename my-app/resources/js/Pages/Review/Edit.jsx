@@ -25,10 +25,18 @@ const Edit = (props) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const cancelRef = React.useRef();
     const [loading, setLoading] = useState(false);
-    const [hoverRating, setHoverRating] = useState(0);
+    const [hoverRating, setHoverRating] = useState({
+        teaching_rating: 0,
+        study_rating: 0,
+        facility_rating: 0,
+        cost_rating: 0,
+    });
     const [values, setValues] = useState({
         review_id: props.review.id,
-        rating: props.review.rating,
+        teaching_rating: props.review.teaching_rating || 1, // 講師の教え方
+        study_rating: props.review.study_rating || 1, // 定期テスト対策
+        facility_rating: props.review.facility_rating || 1, // 自習室の環境
+        cost_rating: props.review.cost_rating || 1, // 料金
         comment: props.review.comment,
     });
 
@@ -44,18 +52,19 @@ const Edit = (props) => {
             [name]: value,
         });
     };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         setLoading(true);
         e.target.disabled = true;
         router.post(route("review.update"), values);
     };
-    // 削除
+
     const handleDelete = (e) => {
         e.preventDefault();
-        console.log(values.review_id);
         router.delete(route("review.destroy", { id: values.review_id }));
     };
+
     return (
         <>
             <AlertDialog
@@ -88,7 +97,7 @@ const Edit = (props) => {
                 p={4}
                 m={4}
                 mx={"auto"}
-                bg={"blue.100"}
+                bg={"gray.100"}
                 borderRadius={"md"}
                 boxShadow={"md"}
                 w={{ base: "90%", md: 700 }}
@@ -101,8 +110,11 @@ const Edit = (props) => {
                 </Text>
                 <form onSubmit={handleCheck}>
                     <FormControl isRequired mb={4}>
-                        <FormLabel htmlFor="rating" fontWeight={"bold"}>
-                            評価
+                        <FormLabel
+                            htmlFor="teaching_rating"
+                            fontWeight={"bold"}
+                        >
+                            講師の教え方
                         </FormLabel>
                         <HStack spacing={1} mb={4}>
                             {Array(5)
@@ -111,7 +123,122 @@ const Edit = (props) => {
                                     <StarIcon
                                         key={i}
                                         color={
-                                            i < values.rating || i < hoverRating
+                                            i < values.teaching_rating ||
+                                            i < hoverRating.teaching_rating
+                                                ? "red.500"
+                                                : "gray.300"
+                                        }
+                                        cursor={"pointer"}
+                                        onClick={() =>
+                                            setValues({
+                                                ...values,
+                                                teaching_rating: i + 1,
+                                            })
+                                        }
+                                        onMouseEnter={() =>
+                                            setHoverRating({
+                                                ...hoverRating,
+                                                teaching_rating: i + 1,
+                                            })
+                                        }
+                                        onMouseLeave={() =>
+                                            setHoverRating({
+                                                ...hoverRating,
+                                                teaching_rating: 0,
+                                            })
+                                        }
+                                    />
+                                ))}
+                        </HStack>
+                        <FormLabel htmlFor="study_rating" fontWeight={"bold"}>
+                            定期テスト対策の充実度
+                        </FormLabel>
+                        <HStack spacing={1} mb={4}>
+                            {Array(5)
+                                .fill("")
+                                .map((_, i) => (
+                                    <StarIcon
+                                        key={i}
+                                        color={
+                                            i < values.study_rating ||
+                                            i < hoverRating.study_rating
+                                                ? "blue.500"
+                                                : "gray.300"
+                                        }
+                                        cursor={"pointer"}
+                                        onClick={() =>
+                                            setValues({
+                                                ...values,
+                                                study_rating: i + 1,
+                                            })
+                                        }
+                                        onMouseEnter={() =>
+                                            setHoverRating({
+                                                ...hoverRating,
+                                                study_rating: i + 1,
+                                            })
+                                        }
+                                        onMouseLeave={() =>
+                                            setHoverRating({
+                                                ...hoverRating,
+                                                study_rating: 0,
+                                            })
+                                        }
+                                    />
+                                ))}
+                        </HStack>
+                        <FormLabel
+                            htmlFor="facility_rating"
+                            fontWeight={"bold"}
+                        >
+                            自習室の環境
+                        </FormLabel>
+                        <HStack spacing={1} mb={4}>
+                            {Array(5)
+                                .fill("")
+                                .map((_, i) => (
+                                    <StarIcon
+                                        key={i}
+                                        color={
+                                            i < values.facility_rating ||
+                                            i < hoverRating.facility_rating
+                                                ? "green.500"
+                                                : "gray.300"
+                                        }
+                                        cursor={"pointer"}
+                                        onClick={() =>
+                                            setValues({
+                                                ...values,
+                                                facility_rating: i + 1,
+                                            })
+                                        }
+                                        onMouseEnter={() =>
+                                            setHoverRating({
+                                                ...hoverRating,
+                                                facility_rating: i + 1,
+                                            })
+                                        }
+                                        onMouseLeave={() =>
+                                            setHoverRating({
+                                                ...hoverRating,
+                                                facility_rating: 0,
+                                            })
+                                        }
+                                    />
+                                ))}
+                        </HStack>
+                        <FormLabel htmlFor="cost_rating" fontWeight={"bold"}>
+                            料金
+                        </FormLabel>
+                        <HStack spacing={1} mb={4}>
+                            {Array(5)
+                                .fill("")
+                                .map((_, i) => (
+                                    <StarIcon
+                                        key={i}
+                                        color={
+                                            i < values.cost_rating ||
+                                            i < hoverRating.cost_rating
                                                 ? "yellow.500"
                                                 : "gray.300"
                                         }
@@ -119,13 +246,21 @@ const Edit = (props) => {
                                         onClick={() =>
                                             setValues({
                                                 ...values,
-                                                rating: i + 1,
+                                                cost_rating: i + 1,
                                             })
                                         }
                                         onMouseEnter={() =>
-                                            setHoverRating(i + 1)
+                                            setHoverRating({
+                                                ...hoverRating,
+                                                cost_rating: i + 1,
+                                            })
                                         }
-                                        onMouseLeave={() => setHoverRating(0)}
+                                        onMouseLeave={() =>
+                                            setHoverRating({
+                                                ...hoverRating,
+                                                cost_rating: 0,
+                                            })
+                                        }
                                     />
                                 ))}
                         </HStack>
@@ -139,6 +274,7 @@ const Edit = (props) => {
                             name="comment"
                             onChange={handleChange}
                             value={values.comment}
+                            bg="white"
                         ></Textarea>
                     </FormControl>
                     <Button type="submit" colorScheme="green" mt={4}>
@@ -147,15 +283,11 @@ const Edit = (props) => {
                 </form>
             </Box>
             <Box display={"flex"} justifyContent={"center"}>
-              <form onSubmit={handleDelete}>
-                <Button
-                    type="submit"
-                    colorScheme="red"
-                    m={4}
-                >
-                    削除する
-                </Button>
-              </form>
+                <form onSubmit={handleDelete}>
+                    <Button type="submit" colorScheme="red" m={4}>
+                        削除する
+                    </Button>
+                </form>
             </Box>
         </>
     );

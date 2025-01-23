@@ -41,7 +41,9 @@ public function getAverageRatingAttribute()
         return null;
     }
     
-    return round(array_sum($validRatings) / count($validRatings), 1);
+    // return round(array_sum($validRatings) / count($validRatings), 1);
+    $averageRating = array_sum($validRatings) / count($validRatings);
+    return number_format($averageRating, 1); // 小数点第1位まで表示
 }
 
     // shopsテーブルとのリレーション
@@ -74,13 +76,18 @@ public function getAverageRatingAttribute()
 
     public function updateReview($request)
     {
-        // レビューIDからレビューを取得
-        $review = $this->find($request->review_id);
+           // レビューIDからレビューを取得
+    $review = $this->find($request->review_id);
+        // 評価とコメントを更新
+    $review->teaching_rating = $request->teaching_rating;
+    $review->study_rating = $request->study_rating;
+    $review->facility_rating = $request->facility_rating;
+    $review->cost_rating = $request->cost_rating;
+    $review->comment = $request->comment;
 
-        $review->rating = $request->rating;
-        $review->comment = $request->comment;
-        $review->save();
+    // レビューを保存
+    $review->save();
 
-        return $review;
+    return $review;
     }
 }

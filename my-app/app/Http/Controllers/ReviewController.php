@@ -87,26 +87,34 @@ class ReviewController extends Controller
         ]);
     }
     // レビューの更新
-    public function update (Request $request)
+    public function update(Request $request)
     {
         $status = "error";
-        
+    
+        // バリデーション
         $request->validate([
-            'rating' => 'required|integer|between:1,5',
+            'teaching_rating' => 'required|integer|between:1,5',
+            'study_rating' => 'required|integer|between:1,5',
+            'facility_rating' => 'required|integer|between:1,5',
+            'cost_rating' => 'required|integer|between:1,5',
             'comment' => 'required|string|max:255',
         ]);
-        
+    
+        // レビューの更新
         $reviewModel = new Review();
         $review = $reviewModel->updateReview($request);
+    
         // ステータス
-        if($review){
+        if ($review) {
             $status = 'review-updated';
         }
+    
         return redirect()->route('shop.detail', [
             'id' => $review->shop_id,
             'status' => $status,
         ]);
     }
+    
     // レビューの削除
     public function destroy($id)
     {

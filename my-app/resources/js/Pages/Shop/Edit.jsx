@@ -1,17 +1,29 @@
-import React from 'react';
-import MainLayout from '@/Layouts/MainLayout';
-import { Box, Button, FormControl, FormLabel, Input, Textarea, VStack, useToast,Heading,Text,IconButton} from '@chakra-ui/react';
-import {CloseIcon} from '@chakra-ui/icons';
+import React from "react";
+import MainLayout from "@/Layouts/MainLayout";
+import {
+    Box,
+    Button,
+    FormControl,
+    FormLabel,
+    Input,
+    Textarea,
+    VStack,
+    useToast,
+    Heading,
+    Text,
+    IconButton,
+} from "@chakra-ui/react";
+import { CloseIcon } from "@chakra-ui/icons";
 import { router, useForm } from "@inertiajs/react";
 
-
 const Edit = (props) => {
-    const existingImages = props.shop.shop_images ? props.shop.shop_images.map((image) => ({
-      id: image.id,
-      file_name: image.file_name,
-      file_path: image.file_path,
-    })) : [];
-
+    const existingImages = props.shop.shop_images
+        ? props.shop.shop_images.map((image) => ({
+              id: image.id,
+              file_name: image.file_name,
+              file_path: image.file_path,
+          }))
+        : [];
 
     const { data, setData, post, errors } = useForm({
         id: props.shop.id,
@@ -19,7 +31,8 @@ const Edit = (props) => {
         location: props.shop.location,
         description: props.shop.description,
         images: [],
-        existingImages: existingImages,//既に登録されている画像
+        existingImages: existingImages, //既に登録されている画像
+        deletedImages: [], // 削除された画像のIDを保持
     });
 
     const toast = useToast();
@@ -41,13 +54,15 @@ const Edit = (props) => {
 
     // 画像削除
     //イベントも渡す
-    const handleRemoveImage = (index, type,e) => {
-        if(type === "existing"){
-            const images = data.existingImages
+    const handleRemoveImage = (index, type, e) => {
+        if (type === "existing") {
+            const images = data.existingImages;
             // index番目の要素を削除し、その後の要素を詰める
-            images.splice(index, 1)
+            // images.splice(index, 1);
+            const deletedImage = images.splice(index, 1)[0]; // 削除された画像を取得
             setData("existingImages", images);
-        }else if(type === "new"){
+            setData("deletedImages", [...data.deletedImages, deletedImage.id]); // 削除された画像のIDを追加
+        } else if (type === "new") {
             const images = data.images;
             // index番目の要素を削除し、その後の要素を詰める
             images.splice(index, 1);
@@ -64,7 +79,7 @@ const Edit = (props) => {
             });
             document.getElementById("images").files = dataTransfer.files;
         }
-    }
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -148,44 +163,41 @@ const Edit = (props) => {
                         ))}
                         {/* プレビュー */}
                         {data.images.length > 0 && (
-                                <Box display={"flex"}>
-                                    {data.images.map((image,index) => (
-                                        <Box
-                                            key={image.name}
-                                            px={2}
-                                            position={"relative"}
-                                        >
-                                            <img
-                                                src={URL.createObjectURL(image)}
-                                                alt={image.name}
-                                                style={{ width: 100 }}
-                                            />
-                                            <IconButton
-                                                isRound={true}
-                                                position={"absolute"}
-                                                top={{ base: -4, md: -5 }}
-                                                right="0"
-                                                variant="solid"
-                                                colorScheme="gray"
-                                                aria-label="Done"
-                                                fontSize={{ base: "10" }}
-                                                icon={<CloseIcon />}
-                                                onClick={() =>
-                                                    handleRemoveImage(
-                                                        index,
-                                                        "new"
-                                                    )
-                                                }
-                                            />
-                                        </Box>
-                                    ))}
-                                </Box>
+                            <Box display={"flex"}>
+                                {data.images.map((image, index) => (
+                                    <Box
+                                        key={image.name}
+                                        px={2}
+                                        position={"relative"}
+                                    >
+                                        <img
+                                            src={URL.createObjectURL(image)}
+                                            alt={image.name}
+                                            style={{ width: 100 }}
+                                        />
+                                        <IconButton
+                                            isRound={true}
+                                            position={"absolute"}
+                                            top={{ base: -4, md: -5 }}
+                                            right="0"
+                                            variant="solid"
+                                            colorScheme="gray"
+                                            aria-label="Done"
+                                            fontSize={{ base: "10" }}
+                                            icon={<CloseIcon />}
+                                            onClick={() =>
+                                                handleRemoveImage(index, "new")
+                                            }
+                                        />
+                                    </Box>
+                                ))}
+                            </Box>
                         )}
                     </Box>
                     <Input
                         type="file"
                         id="images"
-                        accept=".jpg,.jpeg,.png"
+                        accept="image/jpeg, image/png, image/jpg, image/webp"
                         multiple
                         name="images"
                         onChange={handleImageChange}

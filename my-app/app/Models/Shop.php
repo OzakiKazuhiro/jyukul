@@ -15,6 +15,12 @@ class Shop extends Model
         'description',
         'created_by',
         'updated_by',
+        'average_rating',
+        'average_teaching_rating',
+        'average_study_rating',
+        'average_facility_rating',
+        'average_cost_rating',
+        'reviews_count'
     ];
 
     // reviewsテーブルとのリレーション
@@ -35,6 +41,19 @@ class Shop extends Model
         return $this->hasMany(ShopImage::class);
     }
 
+// 店舗を保存するメソッド
+    public function saveShop(array $data)
+    {
+    $this->name = $data['name'];
+    $this->location = $data['location'];
+    $this->description = $data['description'];
+    $this->created_by = $data['created_by'];
+    $this->updated_by = $data['updated_by'];
+
+    $this->save();
+
+    return $this;
+}
 
     public function updateShop($data)
     {

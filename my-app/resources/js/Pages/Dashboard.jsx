@@ -86,7 +86,7 @@ export default function Dashboard({}) {
                         <form onSubmit={handleSubmit}>
                             <VStack spacing={4}>
                                 <FormControl isInvalid={errors.name}>
-                                    <FormLabel>ユーザー名</FormLabel>
+                                    <FormLabel>新しいユーザー名</FormLabel>
                                     <Input
                                         value={data.name}
                                         onChange={(e) =>
@@ -153,7 +153,9 @@ export default function Dashboard({}) {
                             userId: auth.user.id,
                         })}
                     >
-                        <Button colorScheme={"green"}>関連した店舗</Button>
+                        <Button colorScheme={"green"}>
+                            登録した学習塾一覧
+                        </Button>
                     </Link>
                 </Box>
             </VStack>
