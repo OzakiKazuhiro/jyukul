@@ -23,7 +23,7 @@ export default function Dashboard({}) {
     const [isEditing, setIsEditing] = useState(false);
 
     const { data, setData, post, patch, processing, errors, reset } = useForm({
-        username: auth.name,
+        name: auth.user.name,
         email: auth.user.email,
         avatar: null,
     });

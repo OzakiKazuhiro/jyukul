@@ -6,6 +6,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import { Head, Link, useForm } from "@inertiajs/react";
 import MainLayout from "@/Layouts/MainLayout";
+import { Button } from "@chakra-ui/react";
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -34,6 +35,29 @@ export default function Login({ status, canResetPassword }) {
 
             <form onSubmit={submit}>
                 <div>
+                    {/* <a href="{{route('google.login')}}">
+                        <button class="w-full px-4 py-2 mb-4 text-sm font-medium text-white bg-blue-500 rounded hover:bg-blue-600">
+                            {" "}
+                            Googleアカウントでログイン
+                        </button>{" "}
+                    </a> */}
+                    <a href={route("google.login")}>
+                        <Button
+                            width="full"
+                            px={4}
+                            py={2}
+                            mb={4}
+                            fontSize="sm"
+                            fontWeight="medium"
+                            color="white"
+                            bg="teal.500"
+                            _hover={{ bg: "teal.600" }}
+                            rounded="md"
+                        >
+                            Googleアカウントでログイン
+                        </Button>
+                    </a>
+
                     <InputLabel htmlFor="email" value="Email" />
 
                     <TextInput

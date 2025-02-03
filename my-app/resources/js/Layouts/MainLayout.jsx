@@ -6,11 +6,6 @@ import {
     HStack,
     Link,
     Flex,
-    IconButton,
-    Menu,
-    MenuButton,
-    MenuList,
-    MenuItem,
     Text,
     Button,
     Drawer,
@@ -21,31 +16,9 @@ import {
     DrawerCloseButton,
     useDisclosure,
     VStack,
-    WrapItem,
     Avatar,
 } from "@chakra-ui/react";
 import { HamburgerIcon, SettingsIcon } from "@chakra-ui/icons";
-
-// Avatarコンポーネントをラップして画像ロード状態を管理
-const LoadableAvatar = ({ src, name, ...rest }) => {
-    const [isLoaded, setIsLoaded] = useState(false);
-
-    useEffect(() => {
-        if (src) {
-            const img = new Image();
-            img.src = src;
-            img.onload = () => setIsLoaded(true);
-        } else {
-            setIsLoaded(false); // srcがない場合はロード済みとみなさない
-        }
-    }, [src]);
-
-    if (!isLoaded) {
-        return null; // ロード中は何も表示しない（または<Spinner />を表示）
-    }
-
-    return <Avatar src={src} name={name} {...rest} />;
-};
 
 const MainLayout = ({ children, title }) => {
     const { auth, csrf_token } = usePage().props;

@@ -22,6 +22,7 @@ class User extends Authenticatable
         'password',
         'avatar_path',
         'avatar_url',
+        'gtoken'
     ];
 
     /**
@@ -46,4 +47,15 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+
+    public function hasGoogle() 
+    { if ($this->gtoken){
+        return true; 
+    } else {
+        return false; 
+    }
+        }
+
+
 }
