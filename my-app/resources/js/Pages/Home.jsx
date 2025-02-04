@@ -12,8 +12,6 @@ import {
     Spinner,
     WrapItem,
     SimpleGrid,
-    Wrap,
-    Avatar,
     Select,
 } from "@chakra-ui/react";
 import MainLayout from "../Layouts/MainLayout";
@@ -120,7 +118,7 @@ const Home = (props) => {
                         講師の教え方の評価が高い順
                     </option>
                     <option value="study_rating_high">
-                        定期テスト対策・受験対策の充実度が高い順
+                        定期テスト対策の充実度が高い順
                     </option>
                     <option value="facility_rating_high">
                         自習室の環境が良い順
@@ -185,7 +183,7 @@ const Home = (props) => {
                                                 {shop.name}
                                             </Heading>
                                             <Text>
-                                                {shop.description.length > 30
+                                                {shop.description.length > 20
                                                     ? `${shop.description.slice(
                                                           0,
                                                           20
