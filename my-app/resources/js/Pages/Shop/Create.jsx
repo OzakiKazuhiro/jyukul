@@ -88,7 +88,7 @@ const Create = () => {
                 </FormControl>
                 <FormControl id="images" mb={4}>
                     <FormLabel fontWeight={"bold"}>
-                        画像※３つまで選択可能（jpeg,png
+                        画像※３つまで選択可能（jpeg,png,jpg,webp）
                     </FormLabel>
                     {/* プレビュー */}
                     {data.images.length > 0 && (

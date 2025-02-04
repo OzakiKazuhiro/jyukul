@@ -254,6 +254,7 @@ import {
     Td,
     TableCaption,
     TableContainer,
+    SimpleGrid,
 } from "@chakra-ui/react";
 import ReviewList from "@/Components/Organisms/ReviewList";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
@@ -415,7 +416,10 @@ const Detail = (props, { response }) => {
             )}
 
             {/* テーブル */}
-            <TableContainer>
+            <TableContainer
+                mx="auto"
+                w={{ base: "100%", sm: "400px", md: "600px", lg: "800px" }}
+            >
                 <Table bg="gray.50" variant="simple">
                     <TableCaption placement="top">塾情報</TableCaption>
                     <Tbody>
@@ -478,7 +482,7 @@ const Detail = (props, { response }) => {
             {/* 地図 */}
             <Box
                 mx="auto"
-                mt={4}
+                mt={10}
                 mb={4}
                 w={{ base: "100%", sm: "400px", md: "600px", lg: "800px" }}
             >
@@ -498,13 +502,17 @@ const Detail = (props, { response }) => {
                             }}
                         />
                     ) : (
-                        <Text>地図読み込み中...</Text>
+                        <Text>登録した場所が存在しません</Text>
                     )}
                 </Box>
             </Box>
 
             {/* レビュー */}
-            <Box mt={8}>
+            <Box
+                mx="auto"
+                mt={8}
+                w={{ base: "100%", sm: "400px", md: "600px", lg: "800px" }}
+            >
                 <Heading as="h3" size={"lg"} mb={1}>
                     レビュー
                 </Heading>
@@ -525,7 +533,18 @@ const Detail = (props, { response }) => {
                     {props.reviews.length === 0 && (
                         <Text>レビューはまだありません</Text>
                     )}
-                    <ReviewList reviews={props.reviews} />
+                    <SimpleGrid
+                        columns={{ base: 1, md: 2 }}
+                        spacing={4}
+                        w="full"
+                    >
+                        <ReviewList
+                            spacing={4}
+                            align={"stretch"}
+                            reviews={props.reviews}
+                        />
+                    </SimpleGrid>
+                    {/* <ReviewList reviews={props.reviews} /> */}
                 </Box>
             </Box>
         </Box>

@@ -92,7 +92,12 @@ const Edit = (props) => {
     };
 
     return (
-        <Box p={4} m={4} w={{ base: "90%", md: 700 }}>
+        <Box
+            p={4}
+            mx="auto"
+            mt={4}
+            w={{ base: "90%", sm: "400px", md: "600px", lg: "800px" }}
+        >
             <Heading as="h2" fontSize={{ base: 18, md: 24 }} mb={6}>
                 店舗の編集
             </Heading>
@@ -130,7 +135,9 @@ const Edit = (props) => {
                     />
                 </FormControl>
                 <FormControl id="images" mb={4}>
-                    <FormLabel fontWeight={"bold"}>画像</FormLabel>
+                    <FormLabel fontWeight={"bold"}>
+                        画像※３つまで選択可能（jpeg,png,jpg,webp）
+                    </FormLabel>
                     <Text mb={2}>プレビュー</Text>
 
                     <Box display={"flex"} p={4} bg={"gray.200"}>
@@ -194,13 +201,23 @@ const Edit = (props) => {
                             </Box>
                         )}
                     </Box>
+                    <Button
+                        as="label"
+                        htmlFor="fileInput"
+                        colorScheme="teal"
+                        cursor="pointer"
+                        mt={3}
+                    >
+                        ファイルを選択
+                    </Button>
                     <Input
                         type="file"
-                        id="images"
+                        id="fileInput"
                         accept="image/jpeg, image/png, image/jpg, image/webp"
                         multiple
                         name="images"
                         onChange={handleImageChange}
+                        display="none"
                     />
                 </FormControl>
                 <Button type="submit" colorScheme="teal">
