@@ -17,9 +17,19 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -t rsa ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+          echo "SSH key created. Checking format:"
+          head -n 1 ~/.ssh/id_rsa | sed 's/.*/----- Key starts with this format -----/'
+          echo "----- Key should start with BEGIN RSA PRIVATE KEY or similar -----"
+          echo "Host scanning for: ${SSH_HOST_DISPLAY}"
+          ssh-keyscan -t rsa ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts || echo "Host key scan failed"
+          echo "Testing SSH connection..."
+          ssh -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=5 ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} echo "SSH connection successful" || echo "SSH connection failed"
+        env:
+          SSH_HOST_DISPLAY: ${{ secrets.SSH_HOST }}
 
       - name: Deploy via SSH
+        if: success()
         run: |
-          ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd public_html/Jyukul && git fetch origin main && git reset --hard origin/main && composer install --no-dev --optimize-autoloader && npm install && npm run build && php artisan optimize:clear && php artisan config:cache && php artisan route:cache && chmod -R 775 storage bootstrap/cache"
+          set -x
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd public_html/Jyukul && git fetch origin main && git reset --hard origin/main && composer install --no-dev --optimize-autoloader && npm install && npm run build && php artisan optimize:clear && php artisan config:cache && php artisan route:cache && chmod -R 775 storage bootstrap/cache"
           echo "Deployment completed successfully!"

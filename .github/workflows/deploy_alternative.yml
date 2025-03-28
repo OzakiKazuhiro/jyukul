@@ -1,0 +1,48 @@
+name: Deploy to Rental Server (Alternative)
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # appleboy/scp-action を使ってファイルをアップロード
+      - name: Deploy to Server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          source: "./*"
+          target: "public_html/Jyukul"
+          rm: false
+
+      # リモートコマンドを実行
+      - name: Execute remote commands
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            cd public_html/Jyukul
+            composer install --no-dev --optimize-autoloader
+            npm install
+            npm run build
+            if [ ! -f .env ]; then
+              cp .env.example .env
+              php artisan key:generate
+            fi
+            php artisan optimize:clear
+            php artisan config:cache
+            php artisan route:cache
+            chmod -R 775 storage bootstrap/cache
+            echo "Deployment completed successfully!"
