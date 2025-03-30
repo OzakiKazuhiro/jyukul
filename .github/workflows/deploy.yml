@@ -64,7 +64,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./my-app/
-          server-dir: /oz006.com/public_html/Jyukul/my-app/
+          server-dir: /oz006.com/public_html/jyukul/
           exclude: |
             **/.git*
             **/.git*/**

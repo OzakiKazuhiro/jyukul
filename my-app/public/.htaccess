@@ -5,8 +5,8 @@
 
     RewriteEngine On
 
-    # サブディレクトリ設定
-    RewriteBase /Jyukul/my-app/public
+    # サブドメイン設定（ルートディレクトリ指定）
+    # RewriteBase /
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
