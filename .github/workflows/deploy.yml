@@ -17,29 +17,13 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -p 10022 ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
-          ls -la ~/.ssh
-          echo "SSH鍵のフィンガープリント確認:"
-          ssh-keygen -l -f ~/.ssh/deploy_key || echo "鍵の形式が正しくない可能性があります"
 
-      - name: 接続テスト（デバッグ）
+      - name: 接続テスト
         run: |
-          echo "ホスト: ${{ secrets.SSH_HOST }} (マスク済み)"
-          echo "ポート: 10022"
-          echo "ユーザー名: ${{ secrets.SSH_USERNAME }} (マスク済み)"
-          # StrictHostKeyCheckingをnoに設定し、冗長モードで接続
-          ssh -v -i ~/.ssh/deploy_key -p 10022 -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "echo '接続成功！'; pwd; hostname" || echo "SSH接続に失敗しました"
+          echo "SSH接続テスト中..."
+          ssh -i ~/.ssh/deploy_key -p 10022 -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "echo '接続成功！'"
 
-      - name: RSAキー形式で再試行（必要な場合）
-        if: ${{ failure() }}
-        run: |
-          echo "PEM形式に変換して再試行します..."
-          # 既存の鍵がOpenSSH形式の場合、PEM形式に変換
-          ssh-keygen -p -m PEM -f ~/.ssh/deploy_key -N ""
-          # 再試行
-          ssh -v -i ~/.ssh/deploy_key -p 10022 -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "echo '接続成功！'"
-
-      - name: 接続成功後のデプロイ
-        if: ${{ success() }}
+      - name: rsyncでデプロイ
         run: |
           echo "rsyncを使用してデプロイを開始します..."
           rsync -avz -e "ssh -i ~/.ssh/deploy_key -p 10022 -o StrictHostKeyChecking=no" \
@@ -51,7 +35,6 @@ jobs:
           echo "rsyncによるデプロイが完了しました"
 
       - name: Laravelアプリのセットアップ
-        if: ${{ success() }}
         run: |
           echo "Laravelアプリのセットアップを開始します..."
           ssh -i ~/.ssh/deploy_key -p 10022 -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd /oz006.com/public_html/Jyukul/my-app/ && \
