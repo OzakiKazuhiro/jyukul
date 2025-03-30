@@ -11,28 +11,51 @@ jobs:
       - name: リポジトリのチェックアウト
         uses: actions/checkout@v3
 
-      - name: SSHセットアップ
-        uses: webfactory/ssh-agent@v0.7.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: サーバーの既知のホストに追加
+      - name: SSHキーファイルの設定
         run: |
           mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -p 10022 ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
-      - name: 接続テスト
+      - name: 接続テスト（デバッグ）
         run: |
-          ssh -p 10022 ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "echo 'SSH connection successful'"
+          echo "ホスト: ${{ secrets.SSH_HOST }} (マスク済み)"
+          echo "ポート: 10022"
+          echo "ユーザー名: ${{ secrets.SSH_USERNAME }} (マスク済み)"
+          ssh -i ~/.ssh/deploy_key -p 10022 ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "echo '接続成功！'; pwd; hostname"
 
       - name: rsyncでデプロイ
         run: |
-          rsync -avz -e "ssh -p 10022" \
+          echo "rsyncを使用してデプロイを開始します..."
+          rsync -avz -e "ssh -i ~/.ssh/deploy_key -p 10022" \
             --exclude='.git' \
             --exclude='.github' \
             --exclude='node_modules' \
             --exclude='.env*' \
             ./ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/oz006.com/public_html/Jyukul/my-app/
+          echo "rsyncによるデプロイが完了しました"
 
-          # 必要に応じてサーバー側でビルドコマンドを実行
-          ssh -p 10022 ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd /oz006.com/public_html/Jyukul/my-app/ && npm install --production"
+      - name: Laravelアプリのセットアップ
+        run: |
+          echo "Laravelアプリのセットアップを開始します..."
+          ssh -i ~/.ssh/deploy_key -p 10022 ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd /oz006.com/public_html/Jyukul/my-app/ && \
+            if [ -f composer.json ]; then \
+              echo 'Composerパッケージをインストールします...'; \
+              composer install --no-dev --optimize-autoloader; \
+            fi && \
+            if [ -f package.json ]; then \
+              echo 'npmパッケージをインストールします...'; \
+              npm ci; \
+              echo 'アセットをビルドします...'; \
+              npm run build; \
+            fi && \
+            if [ -f artisan ]; then \
+              echo 'Laravelキャッシュをクリアします...'; \
+              php artisan optimize:clear; \
+              php artisan config:cache; \
+              php artisan route:cache; \
+              echo 'ストレージディレクトリのパーミッションを設定します...'; \
+              chmod -R 775 storage bootstrap/cache; \
+            fi"
+          echo "デプロイが完了しました！"
