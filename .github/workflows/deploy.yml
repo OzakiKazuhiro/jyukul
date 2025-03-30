@@ -1,59 +1,76 @@
-name: デプロイワークフロー
+name: Deploy to Rental Server
 
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: リポジトリのチェックアウト
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: SSHキーファイルの設定
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -p 10022 ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: mbstring, intl, pdo_mysql
+          coverage: none
 
-      - name: 接続テスト
-        run: |
-          echo "SSH接続テスト中..."
-          ssh -i ~/.ssh/deploy_key -p 10022 -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "echo '接続成功！'"
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
-      - name: rsyncでデプロイ
-        run: |
-          echo "rsyncを使用してデプロイを開始します..."
-          rsync -avz -e "ssh -i ~/.ssh/deploy_key -p 10022 -o StrictHostKeyChecking=no" \
-            --exclude='.git' \
-            --exclude='.github' \
-            --exclude='node_modules' \
-            --exclude='.env*' \
-            ./ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/oz006.com/public_html/Jyukul/my-app/
-          echo "rsyncによるデプロイが完了しました"
+      - name: Cache composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
 
-      - name: Laravelアプリのセットアップ
+      - name: Install Composer dependencies
         run: |
-          echo "Laravelアプリのセットアップを開始します..."
-          ssh -i ~/.ssh/deploy_key -p 10022 -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd /oz006.com/public_html/Jyukul/my-app/ && \
-            if [ -f composer.json ]; then \
-              echo 'Composerパッケージをインストールします...'; \
-              composer install --no-dev --optimize-autoloader; \
-            fi && \
-            if [ -f package.json ]; then \
-              echo 'npmパッケージをインストールします...'; \
-              npm ci; \
-              echo 'アセットをビルドします...'; \
-              npm run build; \
-            fi && \
-            if [ -f artisan ]; then \
-              echo 'Laravelキャッシュをクリアします...'; \
-              php artisan optimize:clear; \
-              php artisan config:cache; \
-              php artisan route:cache; \
-              echo 'ストレージディレクトリのパーミッションを設定します...'; \
-              chmod -R 775 storage bootstrap/cache; \
-            fi"
-          echo "デプロイが完了しました！"
+          cd my-app
+          composer install --no-dev --optimize-autoloader
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: "my-app/package-lock.json"
+
+      - name: Install npm dependencies
+        run: |
+          cd my-app
+          npm ci
+
+      - name: Build assets
+        run: |
+          cd my-app
+          npm run build
+
+      - name: Generate key
+        run: |
+          cd my-app
+          cp .env.example .env
+          php artisan key:generate --force
+
+      - name: FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./my-app/
+          server-dir: /oz006.com/public_html/Jyukul/my-app/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            .env
+            .env.example
+            .env.backup
+            .env.production
+            tests/**
