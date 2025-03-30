@@ -1,4 +1,4 @@
-name: Deploy to Rental Server
+name: デプロイワークフロー
 
 on:
   push:
@@ -7,29 +7,41 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: リポジトリのチェックアウト
+        uses: actions/checkout@v3
 
-      - name: Create SSH key
+      - name: Node.jsのセットアップ
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: 依存関係のインストール
+        run: npm ci
+
+      - name: アプリケーションのビルド
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: SSHセットアップ
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: サーバーの既知のホストに追加
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          echo "SSH key created. Checking format:"
-          head -n 1 ~/.ssh/id_rsa | sed 's/.*/----- Key starts with this format -----/'
-          echo "----- Key should start with BEGIN RSA PRIVATE KEY or similar -----"
-          echo "Host scanning for: ${SSH_HOST_DISPLAY}"
-          ssh-keyscan -t rsa ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts || echo "Host key scan failed"
-          echo "Testing SSH connection..."
-          ssh -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=5 ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} echo "SSH connection successful" || echo "SSH connection failed"
-        env:
-          SSH_HOST_DISPLAY: ${{ secrets.SSH_HOST }}
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Deploy via SSH
-        if: success()
+      - name: デプロイ
         run: |
-          set -x
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd public_html/Jyukul && git fetch origin main && git reset --hard origin/main && composer install --no-dev --optimize-autoloader && npm install && npm run build && php artisan optimize:clear && php artisan config:cache && php artisan route:cache && chmod -R 775 storage bootstrap/cache"
-          echo "Deployment completed successfully!"
+          rsync -avz -e "ssh -p ${{ secrets.SSH_PORT }}" \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='node_modules' \
+            --exclude='.env*' \
+            ./ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/oz006.com/public_html/Jyukul/my-app/
+
+          # 必要に応じてサーバー側でnpm installを実行
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd /oz006.com/public_html/Jyukul/my-app/ && npm install --production"
