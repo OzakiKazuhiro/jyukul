@@ -81,7 +81,7 @@ const Home = (props) => {
                     mb={2}
                     textAlign={"center"}
                 >
-                    学習塾一覧
+                    学習塾一覧だ
                 </Heading>
                 <HStack spacing={4} mb={4}>
                     <Input
