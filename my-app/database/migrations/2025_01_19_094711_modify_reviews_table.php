@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('reviews', function (Blueprint $table) {
               // 既存のratingカラムを削除
-              $table->dropColumn('rating');
+              //$table->dropColumn('rating');
 
               // 新しい評価カラムを追加
               $table->integer('teaching_rating')->comment('講師の教え方の評価');
