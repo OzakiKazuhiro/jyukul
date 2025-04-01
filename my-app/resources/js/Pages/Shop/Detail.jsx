@@ -385,12 +385,7 @@ const Detail = (props, { response }) => {
                                     key={image.id}
                                     boxSize="100%"
                                     objectFit="contain"
-                                    src={
-                                        (import.meta.env.VITE_APP_URL ||
-                                            window.location.origin) +
-                                        "/" +
-                                        image.file_path
-                                    }
+                                    src={"/" + image.file_path}
                                     alt={image.file_name}
                                     mb={4}
                                 />

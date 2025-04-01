@@ -26,8 +26,6 @@ return new class extends Migration
             $table->integer('facility_rating')->comment('自習室の環境');
             $table->integer('cost_rating')->comment('料金対効果');
             $table->text('comment')->nullable();
-            $table->string('created_by');
-            $table->string('updated_by');
             $table->timestamps();
         });
     }
