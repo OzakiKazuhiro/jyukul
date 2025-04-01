@@ -12,9 +12,7 @@ const ImagePreview = ({ existingImages, newImages, onRemoveImage }) => {
                         {existingImages.map((image, index) => (
                             <Box key={image.id} px={2} position={"relative"}>
                                 <img
-                                    src={`${import.meta.env.VITE_APP_URL}/${
-                                        image.file_path
-                                    }`}
+                                    src={`/${image.file_path}`}
                                     alt={image.file_name}
                                     style={{ width: 100 }}
                                 />
