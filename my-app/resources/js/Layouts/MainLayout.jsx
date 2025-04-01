@@ -91,10 +91,7 @@ const MainLayout = ({ children, title }) => {
                 </DrawerContent>
             </Drawer>
 
-            <Flex
-                direction="column"
-                minHeight="100vh" // 画面の高さいっぱいに広がる
-            >
+            <Flex direction="column" minHeight="100vh">
                 {/* ヘッダー */}
                 <Box bg={"teal.700"} flexShrink={0}>
                     <HStack
@@ -113,7 +110,7 @@ const MainLayout = ({ children, title }) => {
                                 href={route("shop.index")}
                                 _hover={{ color: "gray.500" }}
                             >
-                                {import.meta.env.VITE_APP_NAME}
+                                Jyukul(ジュクル)
                             </Link>
                         </Heading>
                         {/* PC表示 */}
@@ -198,7 +195,7 @@ const MainLayout = ({ children, title }) => {
                         flexShrink={0} // フッターを固定
                     >
                         <Text fontSize={{ base: 13, md: 16 }}>
-                            &copy; 2025 {import.meta.env.VITE_APP_NAME}
+                            &copy; 2025 ~Jukul（ジュクル）~学習塾レビューサイト~
                         </Text>
                     </Box>
                 </Box>
