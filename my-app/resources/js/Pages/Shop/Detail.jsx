@@ -386,7 +386,8 @@ const Detail = (props, { response }) => {
                                     boxSize="100%"
                                     objectFit="contain"
                                     src={
-                                        import.meta.env.VITE_APP_URL +
+                                        (import.meta.env.VITE_APP_URL ||
+                                            window.location.origin) +
                                         "/" +
                                         image.file_path
                                     }
