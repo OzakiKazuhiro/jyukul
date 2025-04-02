@@ -252,7 +252,7 @@ const Home = (props) => {
                     mb={4}
                     textAlign={"center"}
                 >
-                    新着レビュー
+                    新着レビューです
                 </Heading>
                 <SimpleGrid
                     columns={{ base: 1, md: 2, lg: 3 }}
