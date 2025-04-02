@@ -420,7 +420,7 @@ const Detail = (props, { response }) => {
                     <TableCaption placement="top">塾情報</TableCaption>
                     <Tbody>
                         <Tr>
-                            <Td>作成者</Td>
+                            <Td>作成者です</Td>
                             <Td>
                                 {props.createdUser ? (
                                     <Text fontSize={{ base: 12, md: 14 }}>
