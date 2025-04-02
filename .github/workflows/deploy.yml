@@ -38,9 +38,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "18"
-          # キャッシュを一時的に無効化
-          # cache: "npm"
-          # cache-dependency-path: "my-app/package-lock.json"
+          cache: "npm"
+          cache-dependency-path: "my-app/package-lock.json"
 
       - name: Install npm dependencies
         run: |
