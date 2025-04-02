@@ -54,8 +54,14 @@ jobs:
       - name: Generate key
         run: |
           cd my-app
-          cp .env.example .env
+          cp .env.production .env
           php artisan key:generate --force
+
+      # 「Jukul（ジュクル）~学習塾レビューサイト~」のAPP_NAMEを設定
+      - name: Set correct APP_NAME in .env
+        run: |
+          cd my-app
+          sed -i "s/APP_NAME=.*/APP_NAME=Jyukul（ジュクル）~学習塾レビューサイト~/" .env
 
       - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
