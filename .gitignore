@@ -1,0 +1,13 @@
+# Docker環境関連のファイル
+docker-config/mariadb/data/*
+docker-config/mariadb/data/ib_logfile0
+docker-config/mariadb/data/ib_logfile1
+docker-config/mariadb/data/ibdata1
+
+# ログやキャッシュファイル
+*.log
+*.tmp
+
+# その他一般的に除外するファイル
+.DS_Store
+Thumbs.db 
