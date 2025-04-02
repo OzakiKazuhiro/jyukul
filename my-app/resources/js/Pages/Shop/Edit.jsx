@@ -39,7 +39,7 @@ const Edit = (props) => {
         setData("images", files);
     };
 
-    const handleRemoveImage = (index, type) => {
+    const handleRemoveEditImage = (index, type) => {
         if (type === "existing") {
             const images = data.existingImages;
             const deletedImage = images.splice(index, 1)[0];
@@ -84,7 +84,7 @@ const Edit = (props) => {
                 onSubmit={handleSubmit}
                 onImageChange={handleImageChange}
                 existingImages={data.existingImages}
-                onRemoveImage={handleRemoveImage}
+                onRemoveImage={handleRemoveEditImage}
                 isEdit={true}
             />
             <Box display={"flex"} justifyContent={"center"}>

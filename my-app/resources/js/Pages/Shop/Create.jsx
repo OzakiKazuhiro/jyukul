@@ -33,6 +33,15 @@ const Create = () => {
         post(route("shop.store"));
     };
 
+    const handleRemoveCreateImage = (index, type) => {
+        if (type === "new") {
+            // 新規作成では新しい画像のみを扱う
+            const images = [...data.images];
+            images.splice(index, 1);
+            setData("images", images);
+        }
+    };
+
     return (
         <Box
             p={4}
@@ -54,6 +63,7 @@ const Create = () => {
                 errors={errors}
                 onSubmit={handleSubmit}
                 onImageChange={handleImageChange}
+                onRemoveImage={handleRemoveCreateImage}
             />
         </Box>
     );

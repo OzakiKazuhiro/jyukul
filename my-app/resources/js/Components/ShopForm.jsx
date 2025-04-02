@@ -60,8 +60,7 @@ const ShopForm = ({
                     <ImagePreview
                         existingImages={existingImages}
                         newImages={data.images}
-                        // onRemoveImage={onRemoveImage}
-                        onRemoveImage={onRemoveImage || (() => {})}
+                        onRemoveImage={onRemoveImage}
                     />
                     <Box>
                         <Button
@@ -69,11 +68,6 @@ const ShopForm = ({
                             htmlFor="fileInput"
                             colorScheme="teal"
                             cursor="pointer"
-                            onClick={(e) => {
-                                // ここでクリックイベントを明示的に処理
-                                e.preventDefault();
-                                document.getElementById("fileInput").click();
-                            }}
                         >
                             ファイルを選択
                         </Button>
