@@ -3,6 +3,16 @@ import "../css/app.css";
 
 import "leaflet";
 import "leaflet/dist/leaflet.css";
+import { Icon } from "leaflet";
+
+// Leafletのデフォルトアイコンの問題を修正
+import icon from "leaflet/dist/images/marker-icon.png";
+import iconShadow from "leaflet/dist/images/marker-shadow.png";
+
+let DefaultIcon = Icon.Default.prototype;
+DefaultIcon.options.iconUrl = icon;
+DefaultIcon.options.shadowUrl = iconShadow;
+DefaultIcon.options.iconRetinaUrl = icon;
 
 import { ChakraProvider } from "@chakra-ui/react";
 import { createRoot } from "react-dom/client";
