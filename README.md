@@ -1,64 +1,97 @@
-# 使用技術
-![Laravel](https://img.shields.io/badge/Laravel-10-brightgreen.svg)
-![PHP](https://img.shields.io/badge/PHP-8-blue.svg)
-![MariaDB](https://img.shields.io/badge/MariaDB-10.4-blue.svg)
-![nginx](https://img.shields.io/badge/nginx-1.18-blue.svg)
-![Docker](https://img.shields.io/badge/Docker-20.10-blue.svg)
-![docker-compose](https://img.shields.io/badge/docker--compose-1.29-blue.svg)
+# Jukul（ジュクル） - 学習塾レビューサイト
 
+## 📝 プロジェクト概要
 
-# Laravelプロジェクトの作成方法
+Jukul（ジュクル）は、Laravel 11 と React を使用して開発された、学習塾のレビューと情報共有のための Web アプリケーションです。
+ユーザーフレンドリーな UI/UX と、信頼性の高い情報提供を目指した実用的なプロジェクトです。
 
-1. **cloneする。**  
-   プロジェクトのコピーを自分のコンピュータにダウンロードします。
-   ```
-   git clone https://github.com/sho55/php83-nginx-mariadb.git 
-   ```
+### 🌟 主な機能
 
-2. **docker composeで立ち上げる。**  
-   ダウンロードしたプロジェクトを使って、必要なプログラム（コンテナと呼ばれる）を自動的に起動します。
-   ```
-   cd php83-nginx-mariadb
-   docker compose up -d
-   ```
+#### 一般ユーザー向け機能
 
-3. **phpコンテナに入る**  
-   起動したプログラムの中の一つ、PHPを使う部分にアクセスします。
-   ```
-   docker exec -it myapp-php bash
-   ```
+- Google 認証によるログイン
+- 学習塾の検索・閲覧
+- 地図上での学習塾の位置確認（Leaflet 地図 API を活用）
+- 学習塾のレビュー投稿・編集・削除
+- レスポンシブデザイン対応
 
-4. **laravelをインストール**  
-   PHPを使って、Laravelというツールをセットアップ（インストール）します。
-   ```
-   composer create-project --prefer-dist laravel/laravel my-app
-   ```
+#### 学習塾情報
 
-5. **phpコンテナから出る**  
-   Laravelのセットアップが終わったら、PHPの部分を終了します。
-   ```
-   exit
-   ```
+- 基本情報（名前、場所、説明）
+- 画像ギャラリー（最大 3 枚）
+- ユーザーレビュー
+- 評価指標（講師の教え方、テスト対策充実度、自習室環境、料金対効果）
+- 平均評価スコア
 
-6. **docker-compose.ymlを編集する**  
-   設定ファイル（docker-compose.yml）を変更して、プロジェクトの設定を更新します。以下のように`volumes`セクションを編集してください。
-   ```
-     web: 
-    
-       volumes:
-       - - .:/var/www/
-       + - ./my-app:/var/www/
+### 💻 使用技術
 
-     nginx: 
-    
-       volumes:
-       - - .:/var/www/
-       + - ./my-app:/var/www/
-    
-   ```
+#### フロントエンド
 
-7. **再度docker composeで立ち上げる**  
-   更新した設定で、もう一度プログラムを起動します。
-   ```
-   docker compose up -d
-   ```
+- React 18
+- Chakra UI（モダンな UI コンポーネント）
+- Leaflet（地図表示）
+- Splide.js（画像スライダー）
+- Inertia.js（SPA の実現）
+
+#### バックエンド
+
+- Laravel 11
+- MariaDB
+- Google OAuth 認証
+- Laravel Socialite（認証機能）
+
+#### インフラ・デプロイ環境
+
+- Docker（開発環境）
+- PHP 8.3 対応のレンタルサーバー（本番環境）
+- GitHub Actions による自動デプロイ
+
+## 📋 主要な実装ポイント
+
+1. **モダンな技術スタック**
+
+   - Laravel + React + Inertia.js の組み合わせによる SPA 構築
+   - Chakra UI によるモダンで使いやすい UI 実装
+   - Docker を活用した開発環境構築
+
+2. **地図連携機能**
+
+   - Leaflet を使用した学習塾の位置表示
+   - ジオコーディング API を活用した住所 → 座標変換
+
+3. **ユーザビリティ**
+
+   - レスポンシブデザインの実装
+   - 直感的な UI/UX 設計
+   - 画像プレビューと複数画像アップロード機能
+
+4. **セキュリティ対策**
+   - Google OAuth 認証の実装
+   - CSRF 対策
+   - XSS 対策
+
+## 👨‍💻 開発者情報
+
+- 開発者: [尾崎和弘]
+- GitHub: [https://github.com/OzakiKazuhiro]
+- ポートフォリオサイト: [https://jyukul.oz006.com/]
+
+## 🔄 開発環境セットアップ
+
+```bash
+# リポジトリのクローン
+git clone https://github.com/OzakiKazuhiro/php83-nginx-mariadb.git
+cd php83-nginx-mariadb
+
+# Dockerコンテナ起動
+docker-compose up -d
+
+# 依存関係のインストール
+docker exec -it myapp-php bash -c "cd /var/www && composer install"
+docker exec -it myapp-php bash -c "cd /var/www && npm install"
+
+# 開発サーバー起動
+docker exec -it myapp-php bash -c "cd /var/www && npm run dev"
+```
+
+ブラウザで http://localhost:81 にアクセスすることでアプリケーションを利用できます。
