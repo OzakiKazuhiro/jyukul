@@ -77,7 +77,30 @@ const ShopForm = ({
                             accept="image/jpeg, image/png, image/jpg, image/webp"
                             multiple
                             name="images"
-                            onChange={onImageChange}
+                            // onChange={onImageChange}
+                            onChange={(e) => {
+                                // Array.isArrayで配列かどうかチェック
+                                const currentFiles = Array.isArray(data.images)
+                                    ? [...data.images]
+                                    : [];
+                                // Array.fromで配列風オブジェクト」を本物の JavaScript 配列に変換
+                                const newFiles = Array.from(e.target.files);
+                                const combinedFiles = [
+                                    ...currentFiles,
+                                    ...newFiles,
+                                ];
+
+                                // この後、onImageChangeを呼び出し元の関数に渡して処理
+                                if (onImageChange) {
+                                    // イベントオブジェクトを新しく作成して渡す
+                                    const newEvent = {
+                                        target: {
+                                            files: combinedFiles,
+                                        },
+                                    };
+                                    onImageChange(newEvent);
+                                }
+                            }}
                             display="none"
                         />
                     </Box>
