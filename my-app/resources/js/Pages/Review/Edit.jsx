@@ -33,10 +33,10 @@ const Edit = (props) => {
     });
     const [values, setValues] = useState({
         review_id: props.review.id,
-        teaching_rating: props.review.teaching_rating || 1, // 講師の教え方
-        study_rating: props.review.study_rating || 1, // 定期テスト対策
-        facility_rating: props.review.facility_rating || 1, // 自習室の環境
-        cost_rating: props.review.cost_rating || 1, // 料金
+        teaching_rating: props.review.teaching_rating || 1,
+        study_rating: props.review.study_rating || 1,
+        facility_rating: props.review.facility_rating || 1,
+        cost_rating: props.review.cost_rating || 1,
         comment: props.review.comment,
     });
 
@@ -292,5 +292,6 @@ const Edit = (props) => {
         </>
     );
 };
+
 Edit.layout = (page) => <MainLayout children={page} title="レビュー編集" />;
 export default Edit;

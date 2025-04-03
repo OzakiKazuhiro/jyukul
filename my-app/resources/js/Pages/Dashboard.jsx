@@ -1,6 +1,5 @@
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import MainLayout from "@/Layouts/MainLayout";
-import { Head, usePage, useForm } from "@inertiajs/react";
+import { usePage, useForm } from "@inertiajs/react";
 import {
     Box,
     Link,
@@ -22,7 +21,7 @@ export default function Dashboard({}) {
     const toast = useToast();
     const [isEditing, setIsEditing] = useState(false);
 
-    const { data, setData, post, patch, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors, reset } = useForm({
         name: auth.user.name,
         email: auth.user.email,
         avatar: null,
@@ -31,17 +30,14 @@ export default function Dashboard({}) {
     const handleSubmit = (e) => {
         e.preventDefault();
         const formData = new FormData();
-        formData.append("_method", "PATCH"); // Method spoofing
+        formData.append("_method", "PATCH");
         formData.append("name", data.name);
         formData.append("email", data.email);
         if (data.avatar) {
             formData.append("avatar", data.avatar);
         }
-
-        // Using post instead of patch for file upload
         post(route("profile.update"), {
             onSuccess: () => {
-                console.log("プロフィール更新成功");
                 setIsEditing(false);
                 toast({
                     title: "プロフィールを更新しました",
@@ -51,7 +47,6 @@ export default function Dashboard({}) {
                 });
             },
             onError: (errors) => {
-                console.error(errors);
                 toast({
                     title: "エラーが発生しました",
                     description: Object.values(errors).join(", "),

@@ -22,7 +22,7 @@ import ReviewList from "@/Components/Organisms/ReviewList";
 const Home = (props) => {
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(false);
-    const [sortBy, setSortBy] = useState(""); // 並べ替えの状態を管理
+    const [sortBy, setSortBy] = useState("");
     const toast = useToast();
 
     if (props.status === "shop-created") {
@@ -63,14 +63,14 @@ const Home = (props) => {
 
         setTimeout(() => {
             setLoading(false);
-            router.get(route("shop.index"), { search: newSearch, sortBy }); // sortByを追加
+            router.get(route("shop.index"), { search: newSearch, sortBy });
         }, 500);
     };
 
     const handleSortChange = (e) => {
         const selectedSort = e.target.value;
         setSortBy(selectedSort);
-        router.get(route("shop.index"), { search, sortBy: selectedSort }); // 並べ替えを適用
+        router.get(route("shop.index"), { search, sortBy: selectedSort });
     };
 
     return (
@@ -100,7 +100,8 @@ const Home = (props) => {
                         </Button>
                     </WrapItem>
                 </HStack>
-                {/* 並べ替え用のドロップダウンを追加 */}
+
+                {/* 並べ替え用のドロップダウン */}
                 <Select
                     placeholder="並べ替え"
                     value={sortBy}
@@ -269,5 +270,6 @@ const Home = (props) => {
         </>
     );
 };
+
 Home.layout = (page) => <MainLayout children={page} title="ホームの画面" />;
 export default Home;

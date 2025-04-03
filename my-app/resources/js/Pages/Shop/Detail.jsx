@@ -22,49 +22,32 @@ import {
 import ReviewList from "@/Components/Organisms/ReviewList";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import "@splidejs/splide/dist/css/themes/splide-default.min.css";
-import Map from "@/Components/Map"; // 地図コンポーネントをインポート
+import Map from "@/Components/Map";
 import axios from "axios";
 
-const Detail = (props, { response }) => {
-    // console.log(props.reviews);
+const Detail = (props) => {
     const toast = useToast();
     const [coordinates, setCoordinates] = useState(null);
-
-    // console.log(coordinates);
-    // console.log(props.shop.location);
-    // console.log(response);
-
-    // デバッグ用のログ
-    // useEffect(() => {
-    //     console.log("Shop Location:", props.shop.location);
-    // }, [props.shop.location]);
 
     // ジオコーディング処理用Effect
     useEffect(() => {
         const fetchCoordinates = async () => {
             try {
-                // console.log("Fetching coordinates for:", props.shop.location);
-
                 const response = await axios.get("/api/geocode", {
                     params: { address: props.shop.location },
                 });
-
-                // console.log("API Response:", response.data);
-
                 if (response.data?.[0]?.geometry?.coordinates) {
                     const [lng, lat] = response.data[0].geometry.coordinates;
-                    // console.log("Setting coordinates:", { lat, lng });
                     setCoordinates({ lat, lng });
                 }
             } catch (error) {
                 console.error("ジオコーディングエラー:", error);
             }
         };
-
         if (props.shop.location) {
             fetchCoordinates();
         }
-    }, [props.shop.location]); // locationが変更されたときに再実行
+    }, [props.shop.location]);
 
     useEffect(() => {
         if (props.status === "review-created") {
@@ -183,7 +166,6 @@ const Detail = (props, { response }) => {
                 </Box>
             )}
 
-            {/* テーブル */}
             <TableContainer
                 mx="auto"
                 w={{ base: "100%", sm: "400px", md: "600px", lg: "800px" }}
@@ -257,8 +239,6 @@ const Detail = (props, { response }) => {
                 <Heading as="h3" size={"lg"} mb={1}>
                     地図
                 </Heading>
-                {/* <Map location={place} /> */}
-                {/* 修正後の地図コンポーネント */}
                 <Box>
                     {coordinates ? (
                         <Map
@@ -312,12 +292,11 @@ const Detail = (props, { response }) => {
                             reviews={props.reviews}
                         />
                     </SimpleGrid>
-                    {/* <ReviewList reviews={props.reviews} /> */}
                 </Box>
             </Box>
         </Box>
     );
 };
-Detail.layout = (page) => <MainLayout children={page} title="ショップ詳細" />;
 
+Detail.layout = (page) => <MainLayout children={page} title="ショップ詳細" />;
 export default Detail;

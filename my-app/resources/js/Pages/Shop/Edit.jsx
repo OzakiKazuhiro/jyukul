@@ -13,7 +13,7 @@ const Edit = (props) => {
           }))
         : [];
 
-    const { data, setData, post, errors } = useForm({
+    const { data, setData, errors } = useForm({
         id: props.shop.id,
         name: props.shop.name,
         location: props.shop.location,

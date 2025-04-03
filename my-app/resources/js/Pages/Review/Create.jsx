@@ -1,7 +1,6 @@
 import {
     Box,
     Checkbox,
-    Text,
     Heading,
     FormControl,
     FormLabel,
@@ -34,13 +33,12 @@ const Create = (props) => {
     });
     const [values, setValues] = useState({
         shop_id: props.shop.id,
-        // rating: 1, ←最初はratingのみだった
-        teaching_rating: 1, // 講師の教え方
-        study_rating: 1, // 定期テスト対策
-        facility_rating: 1, // 自習室の環境
-        cost_rating: 1, // 料金
+        teaching_rating: 1,
+        study_rating: 1,
+        facility_rating: 1,
+        cost_rating: 1,
         comment: "",
-        anonymous: false, // 匿名かどうかの状態を追加
+        anonymous: false,
     });
 
     const handleCheck = (e) => {
@@ -279,7 +277,7 @@ const Create = (props) => {
                         ></Textarea>
                     </FormControl>
 
-                    {/* 匿名で投稿するチェックボックスを追加 */}
+                    {/* 匿名で投稿するチェックボックス */}
                     <FormControl mb={4}>
                         <HStack spacing={4}>
                             <Checkbox
@@ -300,5 +298,6 @@ const Create = (props) => {
         </>
     );
 };
+
 Create.layout = (page) => <MainLayout children={page} title="レビュー投稿" />;
 export default Create;

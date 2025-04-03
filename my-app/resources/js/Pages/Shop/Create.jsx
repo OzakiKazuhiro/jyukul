@@ -1,7 +1,7 @@
 import React from "react";
 import MainLayout from "@/Layouts/MainLayout";
 import { Box, Heading, useToast } from "@chakra-ui/react";
-import { router, useForm } from "@inertiajs/react";
+import { useForm } from "@inertiajs/react";
 import ShopForm from "@/Components/ShopForm";
 
 const Create = () => {
@@ -35,7 +35,6 @@ const Create = () => {
 
     const handleRemoveCreateImage = (index, type) => {
         if (type === "new") {
-            // 新規作成では新しい画像のみを扱う
             const images = [...data.images];
             images.splice(index, 1);
             setData("images", images);

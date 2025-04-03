@@ -120,11 +120,11 @@ export default function Register() {
                         href={route("login")}
                         className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     >
-                        Already registered?
+                        すでに登録済みですか？
                     </Link>
 
                     <PrimaryButton className="ms-4" disabled={processing}>
-                        Register
+                        新規登録
                     </PrimaryButton>
                 </div>
             </form>

@@ -4,7 +4,6 @@ import ReviewList from "@/Components/Organisms/ReviewList";
 import { Box, Heading } from "@chakra-ui/react";
 
 const IndexByUser = (props) => {
-  console.log(props.user);
     return (
         <>
             <Box p={4}>
@@ -23,6 +22,9 @@ const IndexByUser = (props) => {
             </Box>
         </>
     );
-}
-IndexByUser.layout = (page) => <MainLayout children={page} title="ユーザーのレビュー一覧" />
+};
+
+IndexByUser.layout = (page) => (
+    <MainLayout children={page} title="ユーザーのレビュー一覧" />
+);
 export default IndexByUser;
