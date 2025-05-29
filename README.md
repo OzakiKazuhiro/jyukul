@@ -71,7 +71,4 @@ Jukul（ジュクル）は、Laravel 11 と React を使用して開発された
    - XSS 対策
 
 ## 👨‍💻 開発者情報
-
 - 開発者: [尾崎和弘]
-- GitHub: [https://github.com/OzakiKazuhiro]
-- ポートフォリオサイト: [https://jyukul.oz006.com/]
